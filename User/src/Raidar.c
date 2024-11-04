@@ -1,7 +1,6 @@
 #include "Raidar.h"
 #include "Delay.h"
-#include "Command.h"
-
+#include "Command_Raidar.h"
 
 /**
  * @fn      Raidar_Init
