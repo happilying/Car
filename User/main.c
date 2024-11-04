@@ -1,7 +1,9 @@
 #include "Motor.h"
 #include "Route.h"
 #include "USART.h"
-#include "Raidar.h"
+//#include "Raidar.h"
+#include "GPS.h"
+#include "IMU.h"
 
 //u32 count = 0;
 
@@ -9,11 +11,8 @@ int main(void)
 {
     Motor_Init();
     Route_Init();
-    Raidar_Init();
-    Raidar_Set_Rotation(100);
     UART_Init(115200, UART1);
     UART_Send_Data(UART1, 0x66);
-    Raidar_Start_Scan(Standard);
     while(1)
     {
         UART_Send_Data(UART1, UART_Get_Data(UART3));
