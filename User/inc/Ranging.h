@@ -2,6 +2,7 @@
 #define _RANGING_H
 
 #include "USART.h"
+#include "Location.h"
 
 void Ranging_Init(void);
 
