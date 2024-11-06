@@ -286,6 +286,14 @@ u16 UART_Get_Length(UARTS UART_Select)
     }
 }
 
+void UART_Send_Array(UARTS UART_Select,u8 *Array)
+{
+    for(u16 i =0;i <= sizeof(Array);i++)
+    {
+        UART_Send_Data(UART_Select,*(Array + i));
+    }
+}
+
 void USART1_IRQHandler(void)
 {
     if(USART_GetITStatus(USART1, USART_IT_IDLE) != RESET)

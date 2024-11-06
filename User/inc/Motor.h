@@ -10,7 +10,7 @@ typedef enum {FORWARD = 0,BACKWARD = !FORWARD} DIRECTIONS;
 
 void Motor_Init(void);
 void Motor_Set_PWM(u16 ccp);
-u16 Moter_Get_PWM(void);
+u16 Motor_Get_PWM(void);
 void Moter_Set_Direction(DIRECTIONS DIRECTION);
 
 
