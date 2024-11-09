@@ -12,7 +12,7 @@
 
 typedef struct
 {
-   int32_t AX,AY,Z;
+   float AX,AY,Z;
    u16 t_ms;
 } IMU_State;
 

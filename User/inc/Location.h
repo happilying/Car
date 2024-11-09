@@ -8,16 +8,16 @@
 
 typedef struct
 {
-    uint16_t X,Y;
-    int16_t RZ;
+    float X,Y;
+    float RZ;
 } Locations;
 
 typedef struct
 {
-    int16_t VX,VY,RZ;
+    float VX,VY,RZ;
 } Speeds;
 
 void LOCATION_Init(void);
-Locations LOCATION_Update_Speed(void);
+Locations LOCATION_Update(void);
 
 #endif
