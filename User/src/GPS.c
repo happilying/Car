@@ -1,5 +1,4 @@
 #include "GPS.h"
-#include "USART.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -97,8 +96,9 @@ void GPS_Init(void)
  * @param latitude 存储纬度的指针
  * @param longitude 存储经度的指针
  */
-void GPS_Get_Location(float *latitude, float *longitude)
+GPS_Location GPS_Get_Location(void)
 {
+    GPS_Location GPS = {0};
     char *token;
     char nmeaSentence[NMEA_SENTENCE_MAX_LENGTH];
     uint16_t i = 0;
@@ -137,11 +137,11 @@ void GPS_Get_Location(float *latitude, float *longitude)
         // 提取纬度
         if (token != NULL)
         {
-            *latitude = atof(token) / 100.0;
+            GPS.latitude = atof(token) / 100.0;
             token = strtok(NULL, ",");
             if (token != NULL && token[0] == 'S')
             {
-                *latitude = -*latitude;
+                GPS.latitude = -GPS.latitude;
             }
         }
 
@@ -149,11 +149,11 @@ void GPS_Get_Location(float *latitude, float *longitude)
         token = strtok(NULL, ",");
         if (token != NULL)
         {
-            *longitude = atof(token) / 100.0;
+            GPS.longitude = atof(token) / 100.0;
             token = strtok(NULL, ",");
             if (token != NULL && token[0] == 'W')
             {
-                *longitude = -*longitude;
+                GPS.longitude = -GPS.longitude;
             }
         }
     }

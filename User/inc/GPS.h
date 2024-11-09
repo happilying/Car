@@ -9,7 +9,13 @@
 #define GPS_bool u32
 #define GPS_MAX_SIZE 128
 
+typedef struct
+{
+    float latitude,longitude;
+}GPS_Location;
+
+
 void GPS_Init(void);
-void GPS_Get_Location();
+GPS_Location GPS_Get_Location(void);
 
 #endif
