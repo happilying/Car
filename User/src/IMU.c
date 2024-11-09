@@ -6,7 +6,7 @@ IMU_State Noise = {0};
 
 u16 IMU_Init(void)
 {
-    u16 Start_time;
+    u16 Start_time = 0;
     UART_Init(IMU_Baudrate, IMU_UART);
     UART_Send_Array(IMU_UART,Unlock);
     Delay_Ms(190);
@@ -49,13 +49,13 @@ IMU_State IMU_Get_Data(void)
             {
                 case ACC:
                 {
-                    IMU.AX = ((int32_t)((buffer[1] << 8)|buffer[2]) / 32768 * 16 * 9800000 - Noise.AX);
-                    IMU.AY = ((int32_t)((buffer[3] << 8)|buffer[4]) / 32768 * 16 * 9800000 - Noise.AY);
+                    IMU.AX = ((int16_t)(buffer[1] << 8)|buffer[2]) / 32768 * 16 * 9.8 - Noise.AX;
+                    IMU.AY = ((int16_t)(buffer[3] << 8)|buffer[4]) / 32768 * 16 * 9.8 - Noise.AY;
                     break;
                 }
                 case ANG:
                 {
-                    IMU.Z = ((int32_t)((buffer[5] << 8)|buffer[6]) / 32768 * 180000 - Noise.Z);
+                    IMU.Z = ((int16_t)(buffer[5] << 8)|buffer[6]) / 32768 * 180 - Noise.Z;
                     break;
                 }
                 case TIME:
