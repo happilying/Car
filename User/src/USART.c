@@ -21,6 +21,7 @@ void UART_Init(u32 baudrate,UARTS UART_Select)
 
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
+    //共用DMA结构体值定义
     DMA_InitStructure.DMA_PeripheralInc      = DMA_PeripheralInc_Disable;
     DMA_InitStructure.DMA_MemoryInc          = DMA_MemoryInc_Enable;
     DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
@@ -31,6 +32,7 @@ void UART_Init(u32 baudrate,UARTS UART_Select)
     DMA_InitStructure.DMA_DIR                = DMA_DIR_PeripheralSRC;
     DMA_InitStructure.DMA_BufferSize         = RX_BUFFER_LEN;
 
+    //GPIO替代使能
     switch(UART_Select)
     {
         case UART1:
@@ -80,10 +82,12 @@ void UART_Init(u32 baudrate,UARTS UART_Select)
         default:break;
     }
 
+    //中断仲裁器共用结构体值定义
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority        = 1;
     NVIC_InitStructure.NVIC_IRQChannelCmd                = ENABLE;
 
+    //USART共用结构体值定义
     USART_InitStructure.USART_BaudRate = baudrate;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
@@ -91,6 +95,7 @@ void UART_Init(u32 baudrate,UARTS UART_Select)
     USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
 
+    //剩余不同USART定义
     switch(UART_Select)
     {
         case UART1:
@@ -189,6 +194,7 @@ void UART_Clear_Buffer(UARTS UART_Select)
         case UART3:UART_Buffer3.Start_Conter = UART_Buffer3.End_Conter;break;
     }
 }
+
 /**
  * @fn      UART_Send_Data
  *
@@ -296,6 +302,16 @@ u16 UART_Get_Length(UARTS UART_Select)
     }
 }
 
+/**
+ * @fn      UART_Send_Array
+ *
+ * @brief   发送一个数组
+ *
+ * @param   UART_Select 指定UASRT
+ * @param   Array 数组指针（uint_8类型）
+ * 
+ * @return none
+ */
 void UART_Send_Array(UARTS UART_Select,u8 *Array)
 {
     for(u16 i =0;i <= sizeof(Array);i++)

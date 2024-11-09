@@ -1,7 +1,6 @@
 #ifndef _LOCATION_H
 #define _LOCATION_H
 
-#include "ch32v10x.h"
 #include "IMU.h"
 #include "GPS.h"
 #include "Motor.h"

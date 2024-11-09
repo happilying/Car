@@ -6,7 +6,7 @@
  *
  * @brief   初始化电机
  *
- * @return none
+ * @return  none
  */
 void Motor_Init(void)
 {

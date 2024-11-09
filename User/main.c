@@ -5,16 +5,25 @@
 #include "Ranging.h"
 
 //u32 count = 0;
-IMU_State IMU1 = {0};
 int main(void)
 {
+    int i = 0;
+    u8 Buffer[10] = {0};
     Motor_Init();
     Route_Init();
     UART_Init(115200, UART1);
-    IMU_Init();
     UART_Send_Data(UART1, 0x66);
     while(1)
     {
-        UART_Send_Data(UART1, UART_Get_Data(UART2));
+        while(UART_Get_Length(UART1))
+        {
+            Buffer[i] = UART_Get_Data(UART1);
+            i++;
+        }
+        if(!UART_Get_Data(UART1))
+        {
+            UART_Send_Array(UART1,Buffer);
+            i = 0;
+        }
     }
 }

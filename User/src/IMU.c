@@ -19,6 +19,10 @@ u16 IMU_Init(void)
         Noise.AX += IMU.AX;
         Noise.AY += IMU.AY;
         Noise.Z += IMU.Z;
+        if(i == Noise_Count - 1)
+        {
+            Start_time = IMU.t_ms;
+        }
     }
     Noise.AX /= Noise_Count;
     Noise.AY /= Noise_Count;
