@@ -170,6 +170,16 @@ void UART_Init(u32 baudrate,UARTS UART_Select)
     }
 }
 
+/**
+ * @fn      UART_Clear_Buffer
+ *
+ * @brief   
+ *
+ * @param   baudrate 波特率
+ * @param   UART_Select 指定UASRT
+ * 
+ * @return none
+ */
 void UART_Clear_Buffer(UARTS UART_Select)
 {
     switch(UART_Select)

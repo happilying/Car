@@ -3,8 +3,9 @@
 
 #include "USART.h"
 
-#define ACC (0x51)
-#define ANG (0x53)
+#define ACC 0x51
+#define ANG 0x53
+#define TIME 0x50
 #define IMU_UART UART2
 #define IMU_Baudrate 9600
 #define Noise_Count 100
@@ -12,9 +13,10 @@
 typedef struct
 {
    int32_t AX,AY,Z;
+   u16 t_ms;
 } IMU_State;
 
-void IMU_Init(void);
+u16 IMU_Init(void);
 IMU_State IMU_Get_Data(void);
 
 #endif

@@ -18,8 +18,6 @@ typedef struct
 } Speeds;
 
 void LOCATION_Init(void);
-void LOCATION_Update_Speed(u32 Start_Time);
-u32 LOCATION_Get_Time(void);
-
+Locations LOCATION_Update_Speed(void);
 
 #endif
