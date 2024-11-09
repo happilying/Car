@@ -1,6 +1,12 @@
 #include "Route.h"
 
-
+/**
+ * @fn      Route_Init
+ *
+ * @brief   初始化舵机模块
+ * 
+ * @return none
+ */
 void Route_Init(void)
 {
     GPIO_InitTypeDef        GPIO_InitStructure = {0};
@@ -35,7 +41,15 @@ void Route_Init(void)
     TIM_Cmd(TIM3, ENABLE);
 }
 
-
+/**
+ * @fn      Set_Angle
+ *
+ * @brief   设置舵机转动角度
+ *
+ * @param   Angle 角度
+ * 
+ * @return none
+ */
 void Set_Angle(u16 Angle)
 {
     if(Angle > MAX_ROTATION)
@@ -45,7 +59,13 @@ void Set_Angle(u16 Angle)
     TIM_SetCompare1(TIM3,Angle);
 }
 
-
+/**
+ * @fn      Get_Angle
+ *
+ * @brief   获取舵机的当前角度
+ * 
+ * @return  角度
+ */
 u16 Get_Angle(void)
 {
     return TIM_GetCapture1(TIM4);
