@@ -67,7 +67,7 @@ int GPS_setModes(u8 GGA, u8 GLL, u8 GSA, u8 GSV, u8 RMC, u8 VTG)
             RMC, VTG, GGA, GSA, GSV, checksum);
 
     if (*message)
-        UART_Send_Array(GPS_UART, (u8 *)message);
+        UART_Send_Array(GPS_UART, (u8 *)message, sizeof(message));
 
     return 1;
 }
@@ -79,7 +79,7 @@ int GPS_setModes(u8 GGA, u8 GLL, u8 GSA, u8 GSV, u8 RMC, u8 VTG)
 void GPS_Set_BoundRate(int boundrate)
 {
     char *message = GPS_getBaudRateMessage(boundrate);
-    UART_Send_Array(GPS_UART, (u8 *)message);
+    UART_Send_Array(GPS_UART, (u8 *)message, sizeof(message));
 }
 
 /**
@@ -90,10 +90,6 @@ void GPS_Init(void)
     // 初始化UART用于GPS通信
     int baud = 9600;
     UART_Init(baud, GPS_UART);
-
-    // 更新波特率
-    GPS_Set_BoundRate(baud);
-    Delay_Ms(2 * 1000);
 
     // 配置GPS模块仅ping RMC
     GPS_setModes(0, 0, 0, 0, 1, 0);

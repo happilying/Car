@@ -309,12 +309,13 @@ u16 UART_Get_Length(UARTS UART_Select)
  *
  * @param   UART_Select 指定UASRT
  * @param   Array 数组指针（uint_8类型）
+ * @param   Length 发送个数
  * 
  * @return none
  */
-void UART_Send_Array(UARTS UART_Select,u8 *Array)
+void UART_Send_Array(UARTS UART_Select,u8 *Array,int Length)
 {
-    for(u16 i =0;i <= sizeof(Array);i++)
+    for(u16 i =0;i <= Length - 1;i++)
     {
         UART_Send_Data(UART_Select,*(Array + i));
     }
