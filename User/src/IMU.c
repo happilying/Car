@@ -34,6 +34,7 @@ u16 IMU_Init(void)
     Noise.AX /= Noise_Count;
     Noise.AY /= Noise_Count;
     Noise.Z /= Noise_Count;
+    return Start_time;
 }
 
 IMU_State IMU_Get_Data(void)
@@ -41,13 +42,15 @@ IMU_State IMU_Get_Data(void)
     IMU_State IMU = {0};
     u8 buffer[9] = {0};
     u8 Check = 0x55;
+    UART_Send_Array(IMU_UART, Commander, sizeof(Commander));
+    Delay_Ms(1);
     if(!UART_Get_Length(IMU_UART))
     {
         return IMU;
     }
-    for(u8 j = 0;j <= 2;j++)
+    for(u8 j = 0;j <= 3;j++)
     {
-        while(UART_Get_Data(IMU_UART) == 0x55);
+        while(UART_Get_Data(IMU_UART) != 0x55);
         for(u8 i = 0;i <= (sizeof(buffer) - 1);i++)
         {
             buffer[i] = UART_Get_Data(IMU_UART);
@@ -59,22 +62,23 @@ IMU_State IMU_Get_Data(void)
             {
                 case ACC:
                 {
-                    IMU.AX = ((int16_t)(buffer[1] << 8)|buffer[2]) / 32768 * 16 * 9.8 - Noise.AX;
-                    IMU.AY = ((int16_t)(buffer[3] << 8)|buffer[4]) / 32768 * 16 * 9.8 - Noise.AY;
+                    IMU.AX = ((int16_t)(buffer[1]|(buffer[2] << 8))) / 32768.0f * 16 * 9.8f - Noise.AX;
+                    IMU.AY = ((int16_t)(buffer[3]|(buffer[4] << 8))) / 32768.0f * 16 * 9.8f - Noise.AY;
                     break;
                 }
                 case ANG:
                 {
-                    IMU.Z = ((int16_t)(buffer[5] << 8)|buffer[6]) / 32768 * 180 - Noise.Z;
+                    IMU.Z = ((int16_t)(buffer[5]|(buffer[6] << 8))) / 32768.0f * 180 - Noise.Z;
                     break;
                 }
                 case TIME:
                 {
-                    IMU.t_ms = (u16)((buffer[7] << 8)|buffer[8]);
+                    IMU.t_ms = (u16)(buffer[7]|(buffer[8] << 8));
                     break;
                 }
                 default:break;
             }
+            Check = 0x55;
         }
     }
     return IMU;
