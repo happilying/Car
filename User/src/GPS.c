@@ -8,7 +8,7 @@
  * @param baud 要设置的波特率
  * @return 对应波特率的NMEA字符串
  */
-const char *GPS_getBaudRateMessage(int baud)
+char *GPS_getBaudRateMessage(int baud)
 {
     switch (baud)
     {
