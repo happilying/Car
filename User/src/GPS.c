@@ -88,8 +88,7 @@ void GPS_Set_BoundRate(int boundrate)
 void GPS_Init(void)
 {
     // 初始化UART用于GPS通信
-    int baud = 9600;
-    UART_Init(baud, GPS_UART);
+    UART_Init(GPS_baud, GPS_UART);
 
     // 配置GPS模块仅ping RMC
     GPS_setModes(0, 0, 0, 0, 1, 0);
