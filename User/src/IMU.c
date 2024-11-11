@@ -8,11 +8,11 @@ u16 IMU_Init(void)
 {
     u16 Start_time = 0;
     UART_Init(IMU_Baudrate, IMU_UART);
-    UART_Send_Array(IMU_UART,Unlock);
+    UART_Send_Array(IMU_UART,Unlock,sizeof(Unlock));
     Delay_Ms(190);
-    UART_Send_Array(IMU_UART,Z_Calibration);
+    UART_Send_Array(IMU_UART,Z_Calibration,sizeof(Z_Calibration));
     Delay_Ms(3000);
-    UART_Send_Array(IMU_UART,Save);
+    UART_Send_Array(IMU_UART,Save,sizeof(Save));
     for(u8 i = 0;i <= Noise_Count - 1;i++)
     {
         IMU_State IMU = IMU_Get_Data();

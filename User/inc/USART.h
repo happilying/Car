@@ -38,7 +38,7 @@ void UART_Send_Data(UARTS UART_Select,u8 Data);
 void UART_Clear_Buffer(UARTS UART_Select);
 u8 UART_Get_Data(UARTS UART_Select);
 u16 UART_Get_Length(UARTS UART_Select);
-void UART_Send_Array(UARTS UART_Select,u8 *Array);
+void UART_Send_Array(UARTS UART_Select,u8 *Array,int Length);
 
 
 #endif

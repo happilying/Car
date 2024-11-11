@@ -1,4 +1,5 @@
 #include "GPS.h"
+#include "USART.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -7,7 +8,7 @@
  * @param baud 要设置的波特率
  * @return 对应波特率的NMEA字符串
  */
-const char *GPS_getBaudRateMessage(int baud)
+char *GPS_getBaudRateMessage(int baud)
 {
     switch (baud)
     {
@@ -30,6 +31,18 @@ const char *GPS_getBaudRateMessage(int baud)
     }
 }
 
+u8 GPS_getChecksum(char *message)
+{
+    char *temp = message + 1; // Skip the $
+    u8 checksum = 0;
+    while (*temp != '*')
+    {
+        checksum ^= *temp;
+        temp++;
+    }
+    return checksum;
+}
+
 /**
  * @brief 设置GPS模式
  * @param GGA GGA模式
@@ -43,7 +56,6 @@ const char *GPS_getBaudRateMessage(int baud)
 int GPS_setModes(u8 GGA, u8 GLL, u8 GSA, u8 GSV, u8 RMC, u8 VTG)
 {
     char message[52] = {0};
-    u32 i = 0;
     u8 checksum;
 
     sprintf(message, "$PMTK314,%d,%d,%d,%d,%d,%d,0,0,0,0,0,0,0,0,0,0,0,0,0*",
@@ -55,7 +67,7 @@ int GPS_setModes(u8 GGA, u8 GLL, u8 GSA, u8 GSV, u8 RMC, u8 VTG)
             RMC, VTG, GGA, GSA, GSV, checksum);
 
     if (*message)
-        UART_Send_Array(GPS_UART, (u8 *)message);
+        UART_Send_Array(GPS_UART, (u8 *)message, sizeof(message));
 
     return 1;
 }
@@ -66,8 +78,8 @@ int GPS_setModes(u8 GGA, u8 GLL, u8 GSA, u8 GSV, u8 RMC, u8 VTG)
  */
 void GPS_Set_BoundRate(int boundrate)
 {
-    char *message = get_baud_rate_message(boundrate);
-    UART_Send_Array(GPS_UART, (u8 *)message);
+    char *message = GPS_getBaudRateMessage(boundrate);
+    UART_Send_Array(GPS_UART, (u8 *)message, sizeof(message));
 }
 
 /**
@@ -78,10 +90,6 @@ void GPS_Init(void)
     // 初始化UART用于GPS通信
     int baud = 9600;
     UART_Init(baud, GPS_UART);
-
-    // 更新波特率
-    GPS_Set_BoundRate(baud);
-    Delay_Ms(2 * 1000);
 
     // 配置GPS模块仅ping RMC
     GPS_setModes(0, 0, 0, 0, 1, 0);
@@ -98,11 +106,10 @@ void GPS_Init(void)
  */
 GPS_Location GPS_Get_Location(void)
 {
-    GPS_Location GPS = {0};
     char *token;
     char nmeaSentence[NMEA_SENTENCE_MAX_LENGTH];
     uint16_t i = 0;
-
+    GPS_Location Location = {0};
     // 等待完整的NMEA语句
     while (1)
     {
@@ -137,11 +144,11 @@ GPS_Location GPS_Get_Location(void)
         // 提取纬度
         if (token != NULL)
         {
-            GPS.latitude = atof(token) / 100.0;
+            Location.latitude = atof(token) / 100.0;
             token = strtok(NULL, ",");
             if (token != NULL && token[0] == 'S')
             {
-                GPS.latitude = -GPS.latitude;
+                Location.latitude = -Location.latitude;
             }
         }
 
@@ -149,11 +156,11 @@ GPS_Location GPS_Get_Location(void)
         token = strtok(NULL, ",");
         if (token != NULL)
         {
-            GPS.longitude = atof(token) / 100.0;
+            Location.longitude = atof(token) / 100.0;
             token = strtok(NULL, ",");
             if (token != NULL && token[0] == 'W')
             {
-                GPS.longitude = -GPS.longitude;
+                Location.longitude = -Location.longitude;
             }
         }
     }
