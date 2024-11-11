@@ -1,4 +1,5 @@
 #include "GPS.h"
+#include "USART.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -28,6 +29,18 @@ const char *GPS_getBaudRateMessage(int baud)
     default:
         return NULL;
     }
+}
+
+u8 GPS_getChecksum(char *message)
+{
+    char *temp = message + 1; // Skip the $
+    u8 checksum = 0;
+    while (*temp != '*')
+    {
+        checksum ^= *temp;
+        temp++;
+    }
+    return checksum;
 }
 
 /**
@@ -66,7 +79,7 @@ int GPS_setModes(u8 GGA, u8 GLL, u8 GSA, u8 GSV, u8 RMC, u8 VTG)
  */
 void GPS_Set_BoundRate(int boundrate)
 {
-    char *message = get_baud_rate_message(boundrate);
+    char *message = GPS_getBaudRateMessage(boundrate);
     UART_Send_Array(GPS_UART, (u8 *)message);
 }
 
@@ -96,9 +109,8 @@ void GPS_Init(void)
  * @param latitude 存储纬度的指针
  * @param longitude 存储经度的指针
  */
-GPS_Location GPS_Get_Location(void)
+void GPS_Get_Location(float *latitude, float *longitude)
 {
-    GPS_Location GPS = {0};
     char *token;
     char nmeaSentence[NMEA_SENTENCE_MAX_LENGTH];
     uint16_t i = 0;
@@ -137,11 +149,11 @@ GPS_Location GPS_Get_Location(void)
         // 提取纬度
         if (token != NULL)
         {
-            GPS.latitude = atof(token) / 100.0;
+            *latitude = atof(token) / 100.0;
             token = strtok(NULL, ",");
             if (token != NULL && token[0] == 'S')
             {
-                GPS.latitude = -GPS.latitude;
+                *latitude = -*latitude;
             }
         }
 
@@ -149,11 +161,11 @@ GPS_Location GPS_Get_Location(void)
         token = strtok(NULL, ",");
         if (token != NULL)
         {
-            GPS.longitude = atof(token) / 100.0;
+            *longitude = atof(token) / 100.0;
             token = strtok(NULL, ",");
             if (token != NULL && token[0] == 'W')
             {
-                GPS.longitude = -GPS.longitude;
+                *longitude = -*longitude;
             }
         }
     }
