@@ -4,6 +4,13 @@
 
 IMU_State Noise = {0};
 
+/**
+ * @fn      IMU_Init
+ *
+ * @brief   初始化IMU模块，并校准Z旋转
+ * 
+ * @return  IMU最后汇报时间（u16），
+ */
 u16 IMU_Init(void)
 {
     u16 Start_time = 0;
@@ -31,10 +38,13 @@ u16 IMU_Init(void)
 
 IMU_State IMU_Get_Data(void)
 {
-    IMU_State IMU;
+    IMU_State IMU = {0};
     u8 buffer[9] = {0};
     u8 Check = 0x55;
-    while(!UART_Get_Length(IMU_UART));
+    if(!UART_Get_Length(IMU_UART))
+    {
+        return IMU;
+    }
     for(u8 j = 0;j <= 2;j++)
     {
         while(UART_Get_Data(IMU_UART) == 0x55);
