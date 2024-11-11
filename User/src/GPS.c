@@ -56,7 +56,6 @@ u8 GPS_getChecksum(char *message)
 int GPS_setModes(u8 GGA, u8 GLL, u8 GSA, u8 GSV, u8 RMC, u8 VTG)
 {
     char message[52] = {0};
-    u32 i = 0;
     u8 checksum;
 
     sprintf(message, "$PMTK314,%d,%d,%d,%d,%d,%d,0,0,0,0,0,0,0,0,0,0,0,0,0*",
