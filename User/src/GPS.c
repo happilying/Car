@@ -109,12 +109,12 @@ void GPS_Init(void)
  * @param latitude 存储纬度的指针
  * @param longitude 存储经度的指针
  */
-void GPS_Get_Location(float *latitude, float *longitude)
+GPS_Location GPS_Get_Location(void)
 {
     char *token;
     char nmeaSentence[NMEA_SENTENCE_MAX_LENGTH];
     uint16_t i = 0;
-
+    GPS_Location Location = {0};
     // 等待完整的NMEA语句
     while (1)
     {
@@ -149,11 +149,11 @@ void GPS_Get_Location(float *latitude, float *longitude)
         // 提取纬度
         if (token != NULL)
         {
-            *latitude = atof(token) / 100.0;
+            Location.latitude = atof(token) / 100.0;
             token = strtok(NULL, ",");
             if (token != NULL && token[0] == 'S')
             {
-                *latitude = -*latitude;
+                Location.latitude = -Location.latitude;
             }
         }
 
@@ -161,11 +161,11 @@ void GPS_Get_Location(float *latitude, float *longitude)
         token = strtok(NULL, ",");
         if (token != NULL)
         {
-            *longitude = atof(token) / 100.0;
+            Location.longitude = atof(token) / 100.0;
             token = strtok(NULL, ",");
             if (token != NULL && token[0] == 'W')
             {
-                *longitude = -*longitude;
+                Location.longitude = -Location.longitude;
             }
         }
     }
