@@ -19,8 +19,8 @@ typedef enum {
 
 
 typedef struct{
-    volatile uint16_t Start_Conter;
-    volatile uint16_t End_Conter;
+    volatile uint16_t Start_Counter;
+    volatile uint16_t End_Counter;
     uint8_t RX_Buffer[RX_BUFFER_LEN];
 } UART_Buffer;
 
