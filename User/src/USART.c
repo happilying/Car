@@ -190,9 +190,9 @@ void UART_Clear_Buffer(UARTS UART_Select)
 {
     switch(UART_Select)
     {
-        case UART1:UART_Buffer1.Start_Conter = UART_Buffer1.End_Conter;break;
-        case UART2:UART_Buffer2.Start_Conter = UART_Buffer2.End_Conter;break;
-        case UART3:UART_Buffer3.Start_Conter = UART_Buffer3.End_Conter;break;
+        case UART1:UART_Buffer1.Start_Counter = UART_Buffer1.End_Counter;break;
+        case UART2:UART_Buffer2.Start_Counter = UART_Buffer2.End_Counter;break;
+        case UART3:UART_Buffer3.Start_Counter = UART_Buffer3.End_Counter;break;
     }
 }
 
@@ -247,26 +247,26 @@ u8 UART_Get_Data(UARTS UART_Select)
     {
         case UART1:
         {
-            data = UART_Buffer1.RX_Buffer[UART_Buffer1.Start_Conter];
-            UART_Buffer1.Start_Conter++;
-            if(UART_Buffer1.Start_Conter == RX_BUFFER_LEN)
-            UART_Buffer1.Start_Conter = 0;
+            data = UART_Buffer1.RX_Buffer[UART_Buffer1.Start_Counter];
+            UART_Buffer1.Start_Counter++;
+            if(UART_Buffer1.Start_Counter == RX_BUFFER_LEN)
+            UART_Buffer1.Start_Counter = 0;
             break;
         }
         case UART2:
         {
-            data = UART_Buffer2.RX_Buffer[UART_Buffer2.Start_Conter];
-            UART_Buffer2.Start_Conter++;
-            if(UART_Buffer2.Start_Conter == RX_BUFFER_LEN)
-            UART_Buffer2.Start_Conter = 0;
+            data = UART_Buffer2.RX_Buffer[UART_Buffer2.Start_Counter];
+            UART_Buffer2.Start_Counter++;
+            if(UART_Buffer2.Start_Counter == RX_BUFFER_LEN)
+            UART_Buffer2.Start_Counter = 0;
             break;
         }
         case UART3:
         {
-            data = UART_Buffer3.RX_Buffer[UART_Buffer3.Start_Conter];
-            UART_Buffer3.Start_Conter++;
-            if(UART_Buffer3.Start_Conter == RX_BUFFER_LEN)
-            UART_Buffer3.Start_Conter = 0;
+            data = UART_Buffer3.RX_Buffer[UART_Buffer3.Start_Counter];
+            UART_Buffer3.Start_Counter++;
+            if(UART_Buffer3.Start_Counter == RX_BUFFER_LEN)
+            UART_Buffer3.Start_Counter = 0;
             break;
         }
         default:break;
@@ -290,15 +290,15 @@ u8 UART_Get_Length(UARTS UART_Select)
     {
         case UART1:
         {
-            return (UART_Buffer1.End_Conter < UART_Buffer1.Start_Conter) ? (RX_BUFFER_LEN + UART_Buffer1.End_Conter - UART_Buffer1.Start_Conter) : (UART_Buffer1.End_Conter - UART_Buffer1.Start_Conter);
+            return (UART_Buffer1.End_Counter < UART_Buffer1.Start_Counter) ? (RX_BUFFER_LEN + UART_Buffer1.End_Counter - UART_Buffer1.Start_Counter) : (UART_Buffer1.End_Counter - UART_Buffer1.Start_Counter);
         }
         case UART2:
         {
-            return (UART_Buffer2.End_Conter < UART_Buffer2.Start_Conter) ? (RX_BUFFER_LEN + UART_Buffer2.End_Conter - UART_Buffer2.Start_Conter) : (UART_Buffer2.End_Conter - UART_Buffer2.Start_Conter);
+            return (UART_Buffer2.End_Counter < UART_Buffer2.Start_Counter) ? (RX_BUFFER_LEN + UART_Buffer2.End_Counter - UART_Buffer2.Start_Counter) : (UART_Buffer2.End_Counter - UART_Buffer2.Start_Counter);
         }
         case UART3:
         {
-            return (UART_Buffer3.End_Conter < UART_Buffer3.Start_Conter) ? (RX_BUFFER_LEN + UART_Buffer3.End_Conter - UART_Buffer3.Start_Conter) : (UART_Buffer3.End_Conter - UART_Buffer3.Start_Conter);
+            return (UART_Buffer3.End_Counter < UART_Buffer3.Start_Counter) ? (RX_BUFFER_LEN + UART_Buffer3.End_Counter - UART_Buffer3.Start_Counter) : (UART_Buffer3.End_Counter - UART_Buffer3.Start_Counter);
         }
         default:return 0;
     }
@@ -379,69 +379,69 @@ void UART_Set_baudrate(UARTS UART_Select,u32 baudrate)
 
 void USART1_IRQHandler(void)
 {
-//    if((UART_Buffer1.End_Conter < UART_Buffer1.Start_Conter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH)) > UART_Buffer1.Start_Conter))
+//    if((UART_Buffer1.End_Counter < UART_Buffer1.Start_Counter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH)) > UART_Buffer1.Start_Counter))
 //        HardFault_Handler();
     if(USART_GetITStatus(USART1, USART_IT_IDLE) != RESET)
     {
-        UART_Buffer1.End_Conter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH);
-        if(UART_Buffer1.End_Conter == RX_BUFFER_LEN)
-        UART_Buffer1.End_Conter = 0;
+        UART_Buffer1.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH);
+        if(UART_Buffer1.End_Counter == RX_BUFFER_LEN)
+        UART_Buffer1.End_Counter = 0;
         USART_ReceiveData(USART1);
     }
 }
 
 void USART2_IRQHandler(void)
 {
-//    if((UART_Buffer2.End_Conter < UART_Buffer2.Start_Conter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH)) > UART_Buffer2.Start_Conter))
+//    if((UART_Buffer2.End_Counter < UART_Buffer2.Start_Counter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH)) > UART_Buffer2.Start_Counter))
 //        HardFault_Handler();
     if(USART_GetITStatus(USART2, USART_IT_IDLE) != RESET)
     {
-        UART_Buffer2.End_Conter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH);
-        if(UART_Buffer2.End_Conter == RX_BUFFER_LEN)
-        UART_Buffer2.End_Conter = 0;
+        UART_Buffer2.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH);
+        if(UART_Buffer2.End_Counter == RX_BUFFER_LEN)
+        UART_Buffer2.End_Counter = 0;
         USART_ReceiveData(USART2);
     }
 }
 
 void USART3_IRQHandler(void)
 {
-//    if((UART_Buffer3.End_Conter < UART_Buffer3.Start_Conter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH)) > UART_Buffer3.Start_Conter))
+//    if((UART_Buffer3.End_Counter < UART_Buffer3.Start_Counter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH)) > UART_Buffer3.Start_Counter))
 //        HardFault_Handler();
     if(USART_GetITStatus(USART3, USART_IT_IDLE) != RESET)
     {
-        UART_Buffer3.End_Conter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH);
-        if(UART_Buffer3.End_Conter == RX_BUFFER_LEN)
-        UART_Buffer3.End_Conter = 0;
+        UART_Buffer3.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH);
+        if(UART_Buffer3.End_Counter == RX_BUFFER_LEN)
+        UART_Buffer3.End_Counter = 0;
         USART_ReceiveData(USART3);
     }
 }
 
 void DMA1_Channel5_IRQHandler(void)
 {
-//    if((UART_Buffer1.End_Conter < UART_Buffer1.Start_Conter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH)) > UART_Buffer1.Start_Conter))
+//    if((UART_Buffer1.End_Counter < UART_Buffer1.Start_Counter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH)) > UART_Buffer1.Start_Counter))
 //        HardFault_Handler();
-    UART_Buffer1.End_Conter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH);
-    if(UART_Buffer1.End_Conter == RX_BUFFER_LEN)
-    UART_Buffer1.End_Conter = 0;
+    UART_Buffer1.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH);
+    if(UART_Buffer1.End_Counter == RX_BUFFER_LEN)
+    UART_Buffer1.End_Counter = 0;
     DMA_ClearITPendingBit(DMA1_IT_TC5 | DMA1_IT_HT5);
 }
 
 void DMA1_Channel6_IRQHandler(void)
 {
-//    if((UART_Buffer2.End_Conter < UART_Buffer2.Start_Conter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH)) > UART_Buffer2.Start_Conter))
+//    if((UART_Buffer2.End_Counter < UART_Buffer2.Start_Counter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH)) > UART_Buffer2.Start_Counter))
 //        HardFault_Handler();
-    UART_Buffer2.End_Conter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH);
-    if(UART_Buffer2.End_Conter == RX_BUFFER_LEN)
-    UART_Buffer2.End_Conter = 0;
+    UART_Buffer2.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH);
+    if(UART_Buffer2.End_Counter == RX_BUFFER_LEN)
+    UART_Buffer2.End_Counter = 0;
     DMA_ClearITPendingBit(DMA1_IT_TC6 | DMA1_IT_HT6);
 }
 
 void DMA1_Channel3_IRQHandler(void)
 {
-//    if((UART_Buffer3.End_Conter < UART_Buffer3.Start_Conter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH)) > UART_Buffer3.Start_Conter))
+//    if((UART_Buffer3.End_Counter < UART_Buffer3.Start_Counter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH)) > UART_Buffer3.Start_Counter))
 //        HardFault_Handler();
-    UART_Buffer3.End_Conter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH);
-    if(UART_Buffer3.End_Conter == RX_BUFFER_LEN)
-    UART_Buffer3.End_Conter = 0;
+    UART_Buffer3.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH);
+    if(UART_Buffer3.End_Counter == RX_BUFFER_LEN)
+    UART_Buffer3.End_Counter = 0;
     DMA_ClearITPendingBit(DMA1_IT_TC3 | DMA1_IT_HT3);
 }

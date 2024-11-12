@@ -15,8 +15,8 @@ typedef enum {
 } UARTS;
 
 typedef struct{
-    volatile uint8_t Start_Conter;
-    volatile uint8_t End_Conter;
+    volatile uint8_t Start_Counter;
+    volatile uint8_t End_Counter;
     uint8_t RX_Buffer[RX_BUFFER_LEN];
 } UART_Buffer;
 
