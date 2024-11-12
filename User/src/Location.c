@@ -25,13 +25,13 @@ Locations LOCATION_Update(void)
     {
         float V_X0 = Speed.VX;
         float V_Y0 = Speed.VY;
-        float A_X = -IMU_Data.AX*cosf(IMU_Data.Z*M_PI/180)-IMU_Data.AY*sinf(IMU_Data.Z*M_PI/180);
-        float A_Y = -IMU_Data.AY*cosf(IMU_Data.Z*M_PI/180)-IMU_Data.AX*sinf(IMU_Data.Z*M_PI/180);
-        float delta_t = (time >= IMU_Data.t_ms) ? (time - IMU_Data.t_ms)/1000 : (time + 65536 - IMU_Data.t_ms)/1000;
+        float A_X = -IMU_Data.AX * cosf(IMU_Data.Z * M_PI/180) - IMU_Data.AY * sinf(IMU_Data.Z * M_PI / 180);
+        float A_Y = -IMU_Data.AY * cosf(IMU_Data.Z * M_PI/180) - IMU_Data.AX * sinf(IMU_Data.Z * M_PI / 180);
+        float delta_t = (time >= IMU_Data.t_ms) ? (time - IMU_Data.t_ms) / 1000 : (time + 65536 - IMU_Data.t_ms) / 1000;
         Speed.VX = Speed.VX + delta_t * (A_X0 + A_X) / 2;
         Speed.VY = Speed.VX + delta_t * (A_Y0 + A_Y) / 2;
-        Location.X = Location.X + delta_t * (V_X0 + Speed.VX)/2;
-        Location.Y = Location.Y + delta_t * (V_Y0 + Speed.VY)/2;
+        Location.X = Location.X + delta_t * (V_X0 + Speed.VX) / 2;
+        Location.Y = Location.Y + delta_t * (V_Y0 + Speed.VY) / 2;
         Speed.RZ = IMU_Data.Z;
 
         time = IMU_Data.t_ms;
