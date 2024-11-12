@@ -240,11 +240,10 @@ void UART_Send_Data(UARTS UART_Select,u8 Data)
  *
  * @return  获取的数据
  */
-u8 UART_Get_Data_With_Position(UARTS UART_Select, int position)
+u8 UART_Get_Data(UARTS UART_Select)
 {
     u8 data = 0;
-    while (UART_Get_Length(UART_Select) == 0)
-        ;
+    while (UART_Get_Length(UART_Select) == 0);
     switch (UART_Select)
     {
         case UART1:
