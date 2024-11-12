@@ -8,7 +8,7 @@ Locations Location = {0};
 void LOCATION_Init(void)
 {
     GPS_Location GPS = {0};
-    time = IMU_Init();
+    IMU_Init();
     GPS_Init();
     GPS = GPS_Get_Location();
 }

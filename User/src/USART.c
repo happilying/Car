@@ -1,6 +1,8 @@
 #include "USART.h"
 
-UART_Buffer UART_Buffer1,UART_Buffer2,UART_Buffer3 = {0};
+UART_Buffer UART_Buffer1 = {0},UART_Buffer2 = {0},UART_Buffer3 = {0};
+
+extern void HardFault_Handler(void);
 
 /**
  * @fn      UART_Init
@@ -12,7 +14,7 @@ UART_Buffer UART_Buffer1,UART_Buffer2,UART_Buffer3 = {0};
  * 
  * @return none
  */
-void UART_Init(u32 baudrate,UARTS UART_Select)
+void UART_Init(UARTS UART_Select,u32 baudrate)
 {
     DMA_InitTypeDef  DMA_InitStructure = {0};
     GPIO_InitTypeDef  GPIO_InitStructure = {0};
@@ -180,7 +182,6 @@ void UART_Init(u32 baudrate,UARTS UART_Select)
  *
  * @brief   
  *
- * @param   baudrate 波特率
  * @param   UART_Select 指定UASRT
  * 
  * @return none
@@ -282,7 +283,7 @@ u8 UART_Get_Data(UARTS UART_Select)
  * 
  * @return  字节数量
  */
-u16 UART_Get_Length(UARTS UART_Select)
+u8 UART_Get_Length(UARTS UART_Select)
 {
     switch(UART_Select)
     {
@@ -321,8 +322,54 @@ void UART_Send_Array(UARTS UART_Select,u8 *Array,int Length)
     }
 }
 
+void UART_Set_baudrate(UARTS UART_Select,u32 baudrate)
+{
+    USART_InitTypeDef USART_InitStructure = {0};
+
+    USART_InitStructure.USART_BaudRate = baudrate;
+    USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+    USART_InitStructure.USART_StopBits = USART_StopBits_1;
+    USART_InitStructure.USART_Parity = USART_Parity_No;
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
+
+    switch(UART_Select)
+    {
+        case UART1:
+        {
+            while(USART_GetFlagStatus(USART1, USART_FLAG_TC) != SET);
+            
+            USART_Cmd(USART1, DISABLE);
+            USART_Init(USART1, &USART_InitStructure);
+            USART_Cmd(USART1, ENABLE);
+            break;
+        }
+        case UART2:
+        {
+            while(USART_GetFlagStatus(USART2, USART_FLAG_TC) != SET);
+
+            USART_Cmd(USART2, DISABLE);
+            USART_Init(USART2, &USART_InitStructure);
+            USART_Cmd(USART2, ENABLE);
+            break;
+        }
+        case UART3:
+        {
+            while(USART_GetFlagStatus(USART3, USART_FLAG_TC) != SET);
+
+            USART_Cmd(USART3, DISABLE);
+            USART_Init(USART3, &USART_InitStructure);
+            USART_Cmd(USART3, ENABLE);
+            break;
+        }
+        UART_Clear_Buffer(UART_Select);
+    }
+}
+
 void USART1_IRQHandler(void)
 {
+//    if((UART_Buffer1.End_Conter < UART_Buffer1.Start_Conter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH)) > UART_Buffer1.Start_Conter))
+//        HardFault_Handler();
     if(USART_GetITStatus(USART1, USART_IT_IDLE) != RESET)
     {
         UART_Buffer1.End_Conter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH);
@@ -334,6 +381,8 @@ void USART1_IRQHandler(void)
 
 void USART2_IRQHandler(void)
 {
+//    if((UART_Buffer2.End_Conter < UART_Buffer2.Start_Conter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH)) > UART_Buffer2.Start_Conter))
+//        HardFault_Handler();
     if(USART_GetITStatus(USART2, USART_IT_IDLE) != RESET)
     {
         UART_Buffer2.End_Conter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH);
@@ -345,6 +394,8 @@ void USART2_IRQHandler(void)
 
 void USART3_IRQHandler(void)
 {
+//    if((UART_Buffer3.End_Conter < UART_Buffer3.Start_Conter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH)) > UART_Buffer3.Start_Conter))
+//        HardFault_Handler();
     if(USART_GetITStatus(USART3, USART_IT_IDLE) != RESET)
     {
         UART_Buffer3.End_Conter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH);
@@ -356,6 +407,8 @@ void USART3_IRQHandler(void)
 
 void DMA1_Channel5_IRQHandler(void)
 {
+//    if((UART_Buffer1.End_Conter < UART_Buffer1.Start_Conter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH)) > UART_Buffer1.Start_Conter))
+//        HardFault_Handler();
     UART_Buffer1.End_Conter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH);
     if(UART_Buffer1.End_Conter == RX_BUFFER_LEN)
     UART_Buffer1.End_Conter = 0;
@@ -364,6 +417,8 @@ void DMA1_Channel5_IRQHandler(void)
 
 void DMA1_Channel6_IRQHandler(void)
 {
+//    if((UART_Buffer2.End_Conter < UART_Buffer2.Start_Conter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH)) > UART_Buffer2.Start_Conter))
+//        HardFault_Handler();
     UART_Buffer2.End_Conter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH);
     if(UART_Buffer2.End_Conter == RX_BUFFER_LEN)
     UART_Buffer2.End_Conter = 0;
@@ -372,6 +427,8 @@ void DMA1_Channel6_IRQHandler(void)
 
 void DMA1_Channel3_IRQHandler(void)
 {
+//    if((UART_Buffer3.End_Conter < UART_Buffer3.Start_Conter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH)) > UART_Buffer3.Start_Conter))
+//        HardFault_Handler();
     UART_Buffer3.End_Conter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH);
     if(UART_Buffer3.End_Conter == RX_BUFFER_LEN)
     UART_Buffer3.End_Conter = 0;

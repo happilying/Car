@@ -38,8 +38,7 @@ void Delay_Us(uint32_t n)
     SysTick->CNTL3 = 0;
     SysTick->CTLR = 1;
 
-    while((*(__IO uint32_t *)0xE000F004) <= i)
-        ;
+    while((*(__IO uint32_t *)0xE000F004) <= i);
 }
 
 /*********************************************************************
@@ -64,5 +63,5 @@ void Delay_Ms(uint32_t n)
     SysTick->CNTL3 = 0;
     SysTick->CTLR = 1;
 
-    while((*(__IO uint32_t *)0xE000F004) <= i) ;
+    while((*(__IO uint32_t *)0xE000F004) <= i);
 }
