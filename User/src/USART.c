@@ -274,7 +274,17 @@ u8 UART_Get_Data(UARTS UART_Select)
     return data;
 }
 
-u8 UART_Get_Data_With_Position(UARTS UART_Select, int )
+u8 UART_Get_Data_With_Position(UARTS UART_Select, int position)
+{
+    if(UART_Get_Length(UART_Select) < position)
+        return 0;
+    for(u8 i = 0;i < position;i++)
+    {
+        UART_Get_Data(UART_Select);
+    }
+    return UART_Get_Data(UART_Select);
+}
+
 /**
  * @fn      UART_Get_Length
  *
