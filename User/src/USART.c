@@ -457,4 +457,3 @@ void DMA1_Channel3_IRQHandler(void)
     UART_Buffer3.End_Counter = 0;
     DMA_ClearITPendingBit(DMA1_IT_TC3 | DMA1_IT_HT3);
 }
-s
