@@ -322,6 +322,16 @@ void UART_Send_Array(UARTS UART_Select,u8 *Array,int Length)
     }
 }
 
+/**
+ * @fn      UART_Set_baudrate
+ *
+ * @brief   更改UART波特率
+ *
+ * @param   UART_Select 指定UASRT
+ * @param   baudrate 波特率
+ * 
+ * @return none
+ */
 void UART_Set_baudrate(UARTS UART_Select,u32 baudrate)
 {
     USART_InitTypeDef USART_InitStructure = {0};
