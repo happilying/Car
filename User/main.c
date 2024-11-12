@@ -8,7 +8,11 @@
 //u32 count = 0;
 int main(void)
 {
-    IMU_Init();
-    IMU_State IMU = IMU_Get_Data();
+    volatile IMU_State Noise = {0},IMU1 = {0},IMU2 = {0};
+    Noise = IMU_Init();
+    while(IMU1.t_ms == 0)
+        IMU1 = IMU_Get_Data();
+    while(IMU2.t_ms == 0)
+        IMU2 = IMU_Get_Data();
     while(1);
 }
