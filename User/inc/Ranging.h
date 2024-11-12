@@ -10,9 +10,6 @@
 #define END_BYTE 0xFE
 #define CRC_POLY 0xA001
 
-static uint8_t rx_buffer[BUFFER_SIZE];
-static uint8_t rx_index = 0;
-
 typedef enum
 {
     RANGING_COMMAND_READ = 0x03, // 0x03 读
