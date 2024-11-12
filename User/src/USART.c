@@ -274,6 +274,7 @@ u8 UART_Get_Data(UARTS UART_Select)
     return data;
 }
 
+u8 UART_Get_Data_With_Position(UARTS UART_Select, int )
 /**
  * @fn      UART_Get_Length
  *
