@@ -48,15 +48,18 @@ IMU_State IMU_Init(void)
     return Noise;
 }
 
+/**
+ * @fn      IMU_Get_Data
+ *
+ * @brief   获取IMU数据
+ * 
+ * @return  IMU结构体
+ */
 IMU_State IMU_Get_Data(void)
 {
     IMU_State IMU = {0};
     u8 buffer[9] = {0};
     u8 Check = 0x55;
-    if(!UART_Get_Length(IMU_UART))
-    {
-        return IMU;
-    }
     reget:for(u8 j = 0;j <= 2;j++)
     {
         while(UART_Get_Data(IMU_UART) != 0x55);
