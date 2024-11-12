@@ -13,7 +13,7 @@
 typedef struct
 {
     float latitude,longitude;
-}GPS_Location;
+} GPS_Location;
 
 
 void GPS_Init(void);
