@@ -1,15 +1,15 @@
 #include "Motor.h"
 #include "Route.h"
-#include "Ranging.h"
-
+//#include "Ranging.h"
+#include "GPS.h"
 
 int main(void)
 {
-    volatile Distances distance = {0};
-    Ranging_Init();
+    volatile GPS_Location GPS = {0};
+    GPS_Init();
     while(1)
     {
-        distance = Ranging_Get_Distance();
+        GPS = GPS_Get_Location();
         Delay_Ms(1000);
     }
 }
