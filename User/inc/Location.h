@@ -8,7 +8,6 @@
 typedef struct
 {
     float X,Y;
-    float RZ;
 } Locations;
 
 typedef struct

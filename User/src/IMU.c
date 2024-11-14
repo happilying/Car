@@ -9,11 +9,8 @@
  * 
  * @return  IMU噪声平均值与完成初始化时间，
  */
-IMU_State IMU_Init(void)
+void IMU_Init(void)
 {
-    IMU_State Noise = {0};
-    u8 Noises = Noise_Count;
-
     Delay_Init();
     UART_Init(IMU_UART,9600);
     Delay_Ms(1000);
@@ -29,34 +26,20 @@ IMU_State IMU_Init(void)
     UART_Send_Array(IMU_UART,ACC_Calibration,sizeof(ACC_Calibration));
     Delay_Ms(5000);
     UART_Send_Array(IMU_UART,Save,sizeof(Save));
-    for(u8 i = 0;i <= Noise_Count - 1;i++)
-    {
-        IMU_State IMU = IMU_Get_Data();
-        if(IMU.t_ms == 0)
-        {
-            Noises--;
-            continue;
-        }
-        Noise.AX += IMU.AX;
-        Noise.AY += IMU.AY;
-        Noise.Z += IMU.Z;
-        Noise.t_ms = IMU.t_ms;
-    }
-    Noise.AX /= Noises;
-    Noise.AY /= Noises;
-    Noise.Z /= Noises;
-    return Noise;
 }
 
+/**
+ * @fn      IMU_Get_Data
+ *
+ * @brief   获取IMU数据
+ * 
+ * @return  IMU结构体
+ */
 IMU_State IMU_Get_Data(void)
 {
     IMU_State IMU = {0};
     u8 buffer[9] = {0};
     u8 Check = 0x55;
-    if(!UART_Get_Length(IMU_UART))
-    {
-        return IMU;
-    }
     reget:for(u8 j = 0;j <= 2;j++)
     {
         while(UART_Get_Data(IMU_UART) != 0x55);

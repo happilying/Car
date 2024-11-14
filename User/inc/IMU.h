@@ -8,7 +8,6 @@
 #define TIME 0x50
 #define IMU_UART UART2
 #define IMU_Baudrate 115200
-#define Noise_Count 100
 
 typedef struct
 {
@@ -16,7 +15,7 @@ typedef struct
    u16 t_ms;
 } IMU_State;
 
-IMU_State IMU_Init(void);
+void IMU_Init(void);
 IMU_State IMU_Get_Data(void);
 
 #endif
