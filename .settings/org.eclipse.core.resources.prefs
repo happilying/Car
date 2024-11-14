@@ -1,6 +1,8 @@
 eclipse.preferences.version=1
+encoding//User/inc/Ranging.h=UTF-8
 encoding//User/src/GPS.c=UTF-8
 encoding//User/src/IMU.c=UTF-8
 encoding//User/src/Motor.c=UTF-8
 encoding//User/src/Raidar.c=UTF-8
+encoding//User/src/Ranging.c=UTF-8
 encoding//User/src/USART.c=UTF-8

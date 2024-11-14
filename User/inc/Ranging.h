@@ -3,7 +3,7 @@
 
 #include "Location.h"
 
-#define Ranging_UART UART1
+#define Ranging_UART UART3
 #define Ranging_Baudrate 115200
 #define BUFFER_SIZE 32
 #define START_BYTE 0xFF
@@ -12,13 +12,13 @@
 
 typedef enum
 {
-    RANGING_COMMAND_READ = 0x03, // 0x03 读
-    RANGING_COMMAND_WRITE = 0x06 // 0x06 写
+    RANGING_COMMAND_READ = 0x03, // 0x03 璇�
+    RANGING_COMMAND_WRITE = 0x06 // 0x06 鍐�
 } Ranging_Command;
 
 typedef enum
 {
-    RANGING_REGISTER_DISTANCE = 0x60,
+    RANGING_REGISTER_DISTANCE = 0x34,
     RANGING_REGISTER_STATUS = 0x35
 } Ranging_Register;
 

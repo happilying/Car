@@ -49,8 +49,8 @@ char *Ranging_CreateReadDistanceMessage(uint8_t device_id)
     message[5] = 0x01;
 
     crc = Calculate_CRC((uint8_t *)message, 6);
-    message[6] = (crc >> 8) & 0xFF;
-    message[7] = crc & 0xFF;
+    message[6] = crc & 0xFF;
+    message[7] = (crc >> 8) & 0xFF;
 
     return message;
 }
@@ -87,7 +87,7 @@ Distances Ranging_Get_Distance(void)
     //
     // Process the left device
     if (*readMessageLeft)
-        UART_Send_Array(Ranging_UART, (u8 *)readMessageLeft, sizeof(readMessageLeft));
+        UART_Send_Array(Ranging_UART, (u8 *)readMessageLeft, 8);
 
     while (Ranging_VerifyReadDistanceResponse(LEFT_DEVICE_ID) == 0)
         ;
