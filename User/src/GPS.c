@@ -95,6 +95,7 @@ void GPS_Init(void)
     Delay_Ms(2 * 1000);
 
     // 清空GPS缓冲区
+    UART_Set_Status(GPS_UART, DISABLE);
     UART_Clear_Buffer(GPS_UART);
 }
 
@@ -110,6 +111,7 @@ GPS_Location GPS_Get_Location(void)
     uint16_t i = 0;
     GPS_Location Location = {0};
     // 等待完整的NMEA语句
+    UART_Set_Status(GPS_UART, ENABLE);
     while (1)
     {
         if (UART_Get_Length(GPS_UART) > 0)
@@ -120,6 +122,8 @@ GPS_Location GPS_Get_Location(void)
             {
                 // 接收到完整的NMEA语句
                 nmeaSentence[i] = '\0';
+                UART_Set_Status(GPS_UART, DISABLE);
+                UART_Clear_Buffer(GPS_UART);
                 break;
             }
             else if (i < NMEA_SENTENCE_MAX_LENGTH - 1)

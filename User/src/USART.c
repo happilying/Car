@@ -388,6 +388,25 @@ void UART_Set_baudrate(UARTS UART_Select,u32 baudrate)
     }
 }
 
+void UART_Set_Status(UARTS UART_Select, FunctionalState State)
+{
+    switch(UART_Select)
+    {
+        case UART1:
+        {
+            USART_Cmd(USART1, State);
+        }
+        case UART2:
+        {
+            USART_Cmd(USART2, State);
+        }
+        case UART3:
+        {
+            USART_Cmd(USART3, State);
+        }
+    }
+}
+
 void USART1_IRQHandler(void)
 {
 //    if((UART_Buffer1.End_Counter < UART_Buffer1.Start_Counter) & ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH)) > UART_Buffer1.Start_Counter))
