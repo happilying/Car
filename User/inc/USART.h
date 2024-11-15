@@ -35,5 +35,6 @@ u8 UART_Get_Length(UARTS UART_Select);
 void UART_Send_Array(UARTS UART_Select,u8 *Array,int Length);
 void UART_Set_baudrate(UARTS UART_Select,u32 baudrate);
 u8 UART_Get_Data_With_Position(UARTS UART_Select, int position);
+void UART_Set_Status(UARTS UART_Select, FunctionalState State);
 
 #endif
