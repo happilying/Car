@@ -6,16 +6,22 @@ u16 time = 0;
 Locations Location = {0};
 float A_X0 = 0,A_Y0 = 0;
 
+#ifdef USE_GPS
+GPS_Location GPS_0 = {0};
+#endif
+
 void LOCATION_Init(void)
 {
-    GPS_Location GPS = {0};
     IMU_State IMU_Data ={0};
 
     IMU_Init();
-    GPS_Init();
-    GPS = GPS_Get_Location();
     IMU_Data = IMU_Get_Data();
     time = IMU_Data.t_ms;
+
+    #ifdef USE_GPS
+    GPS_Init();
+    GPS_0 = GPS_Get_Location();
+    #endif
 }
 
 Locations LOCATION_Update(void)
@@ -32,7 +38,7 @@ Locations LOCATION_Update(void)
         Speed.VY = Speed.VX + delta_t * (A_Y0 + A_Y) / 2;
         Location.X = Location.X + delta_t * (V_X0 + Speed.VX) / 2;
         Location.Y = Location.Y + delta_t * (V_Y0 + Speed.VY) / 2;
-        Speed.RZ = IMU_Data.Z;
+        Location.RZ = IMU_Data.Z;
 
         time = IMU_Data.t_ms;
         A_X0 = A_X;
@@ -40,5 +46,25 @@ Locations LOCATION_Update(void)
 
         IMU_Data = IMU_Get_Data();
     }
+
+    #ifdef USE_GPS
+    GPS_Location GPS = GPS_Get_Location();
+    float GPS_X = (GPS.longitude - GPS_0.longitude) / M_LONG;
+    float GPS_Y = (GPS.latitude - GPS_0.latitude) / M_LATI;
+    if((GPS_X - Location.X >= 5)|(Location.X - GPS_X >= 5))
+    {
+        Location.X = GPS_X;
+    }
+    if((GPS_Y - Location.Y >= 5)|(Location.Y - GPS_Y >= 5))
+    {
+        Location.Y = GPS_Y;
+    }
+    #endif
     return Location;
+}
+
+Speeds Speed_Update(void)
+{
+    LOCATION_Update();
+    return Speed;
 }

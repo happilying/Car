@@ -76,6 +76,11 @@ int Ranging_VerifyReadDistanceResponse(uint8_t device_id)
     // }
 }
 
+/**
+ * @brief 
+ * 
+ * @return Distances 
+ */
 Distances Ranging_Get_Distance(void)
 {
     Distances result = {0, 0};

@@ -10,11 +10,15 @@
 #define GPS_MAX_SIZE 128
 #define GPS_baud 9600
 
+/**
+ * @brief 
+ * 
+ */
 typedef struct
 {
-    float latitude,longitude;
+    float latitude,///<纬度
+    longitude;///<经度
 } GPS_Location;
-
 
 void GPS_Init(void);
 GPS_Location GPS_Get_Location(void);

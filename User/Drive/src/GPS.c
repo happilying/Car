@@ -101,8 +101,11 @@ void GPS_Init(void)
 
 /**
  * @brief 从GPS获取位置
+ * 
  * @param latitude 存储纬度的指针
  * @param longitude 存储经度的指针
+ * 
+ * @return GPS_Location结构体
  */
 GPS_Location GPS_Get_Location(void)
 {
@@ -111,6 +114,7 @@ GPS_Location GPS_Get_Location(void)
     uint16_t i = 0;
     GPS_Location Location = {0};
     // 等待完整的NMEA语句
+    UART_Clear_Buffer(GPS_UART);
     UART_Set_Status(GPS_UART, ENABLE);
     while (1)
     {
@@ -147,7 +151,8 @@ GPS_Location GPS_Get_Location(void)
         // 提取纬度
         if (token != NULL)
         {
-            Location.latitude = atof(token) / 100.0;
+            char dd[2] = {*token, *(token + 1)};
+            Location.latitude = atoi(dd) + atof(token + 2) / 60.0;
             token = strtok(NULL, ",");
             if (token != NULL && token[0] == 'S')
             {
@@ -159,7 +164,8 @@ GPS_Location GPS_Get_Location(void)
         token = strtok(NULL, ",");
         if (token != NULL)
         {
-            Location.longitude = atof(token) / 100.0;
+            char dd[3] = {*token, *(token + 1), *(token + 2)};
+            Location.longitude = atoi(dd) + atof(token + 3) / 60.0;
             token = strtok(NULL, ",");
             if (token != NULL && token[0] == 'W')
             {
@@ -167,4 +173,5 @@ GPS_Location GPS_Get_Location(void)
             }
         }
     }
+    return Location;
 }
