@@ -21,6 +21,7 @@ typedef struct
 } GPS_Location;
 
 void GPS_Init(void);
-GPS_Location GPS_Get_Location(void);
+void GPS_Location_Update(void);
+GPS_Location GPS_Location_Get(void);
 
 #endif

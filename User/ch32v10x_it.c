@@ -10,6 +10,9 @@
 * microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 #include "ch32v10x_it.h"
+#include "USART.h"
+
+#include <string.h>
 
 void NMI_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void HardFault_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
@@ -37,7 +40,7 @@ void NMI_Handler(void)
  */
 void HardFault_Handler(void)
 {
-    while(1)
-    {
-    }
+    UART_Init(UART1, 115200);
+    UART_Send_Array(UART1, "Hardfault occured!\r\n", strlen("Hardfault occured!\r\n"));
+    while(1);
 }

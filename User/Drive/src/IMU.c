@@ -2,6 +2,7 @@
 #include "Command_IMU.h"
 #include "Delay.h"
 
+u8 Init = 0;
 /**
  * @fn      IMU_Init
  *
@@ -21,11 +22,28 @@ void IMU_Init(void)
     UART_Set_baudrate(IMU_UART, IMU_Baudrate);
     UART_Send_Array(IMU_UART,Unlock,sizeof(Unlock));
     Delay_Ms(200);
+    UART_Send_Array(IMU_UART,Save,sizeof(Save));
+    Delay_Ms(200);
+    UART_Send_Array(IMU_UART,Unlock,sizeof(Unlock));
+    Delay_Ms(200);
     UART_Send_Array(IMU_UART,Z_Calibration,sizeof(Z_Calibration));
     Delay_Ms(3000);
+    UART_Send_Array(IMU_UART,Save,sizeof(Save));
+    Delay_Ms(200);
+    UART_Send_Array(IMU_UART,Unlock,sizeof(Unlock));
+    Delay_Ms(200);
     UART_Send_Array(IMU_UART,ACC_Calibration,sizeof(ACC_Calibration));
     Delay_Ms(5000);
     UART_Send_Array(IMU_UART,Save,sizeof(Save));
+    Delay_Ms(200);
+    UART_Send_Array(IMU_UART,Unlock,sizeof(Unlock));
+    Delay_Ms(200);
+    UART_Send_Array(IMU_UART,Hz,sizeof(Hz));
+    Delay_Ms(200);
+    UART_Send_Array(IMU_UART,Save,sizeof(Save));
+    Delay_Ms(200);
+    UART_Clear_Buffer(IMU_UART);
+    Init = 1;
 }
 
 /**
@@ -40,9 +58,23 @@ IMU_State IMU_Get_Data(void)
     IMU_State IMU = {0};
     u8 buffer[9] = {0};
     u8 Check = 0x55;
-    reget:for(u8 j = 0;j <= 2;j++)
+    if(Init == 0)
+        UART_Clear_Buffer(IMU_UART);
+        return IMU;
+    for(u8 j = 0;j <= 2;j++)
     {
-        while(UART_Get_Data(IMU_UART) != 0x55);
+        if(UART_Get_Length(IMU_UART) < 33)
+        {
+            break;
+        }
+        while(UART_Get_Data(IMU_UART) != 0x55)
+        {
+            if(UART_Get_Length(IMU_UART) == 0)
+            {
+                break;
+                break;
+            }
+        }
         Check = 0x55;
         for(u8 i = 0;i <= (sizeof(buffer) - 1);i++)
         {
@@ -66,18 +98,15 @@ IMU_State IMU_Get_Data(void)
                 }
                 case TIME:
                 {
-                    if(buffer[1] != 0 | buffer[2] != 0 | buffer[3] != 0)
-                    {
-                        goto reget;
-                    }
                     IMU.t_ms = (u16)(buffer[7]|(buffer[8] << 8));
                     j = 0;
                     break;
                 }
-                default:break;
+                default:return IMU;
             }
+            if(j == 2)
+                IMU.valid = 1;
         }
-        else goto reget;
     }
     return IMU;
 }

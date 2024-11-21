@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+GPS_Location LocationG = {0};
+
 /**
  * @brief 获取GPS波特率消息
  * @param baud 要设置的波特率
@@ -74,6 +76,7 @@ int GPS_setModes(u8 GGA, u8 GLL, u8 GSA, u8 GSV, u8 RMC, u8 VTG)
 
 /**
  * @brief 设置GPS通信的波特率
+ *
  * @param boundrate 期望的波特率
  */
 void GPS_Set_BoundRate(int boundrate)
@@ -93,29 +96,19 @@ void GPS_Init(void)
     // 配置GPS模块仅ping RMC
     GPS_setModes(0, 0, 0, 0, 1, 0);
     Delay_Ms(2 * 1000);
-
-    // 清空GPS缓冲区
-    UART_Set_Status(GPS_UART, DISABLE);
-    UART_Clear_Buffer(GPS_UART);
 }
 
 /**
  * @brief 从GPS获取位置
  * 
- * @param latitude 存储纬度的指针
- * @param longitude 存储经度的指针
- * 
  * @return GPS_Location结构体
  */
-GPS_Location GPS_Get_Location(void)
+void GPS_Location_Update(void)
 {
     char *token;
-    char nmeaSentence[NMEA_SENTENCE_MAX_LENGTH];
+    char nmeaSentence[NMEA_SENTENCE_MAX_LENGTH] = {0};
     uint16_t i = 0;
-    GPS_Location Location = {0};
-    // 等待完整的NMEA语句
-    UART_Clear_Buffer(GPS_UART);
-    UART_Set_Status(GPS_UART, ENABLE);
+
     while (1)
     {
         if (UART_Get_Length(GPS_UART) > 0)
@@ -143,35 +136,41 @@ GPS_Location GPS_Get_Location(void)
         token = strtok(nmeaSentence, ",");
 
         // 忽略前3个标记
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
         {
             token = strtok(NULL, ",");
         }
-
-        // 提取纬度
-        if (token != NULL)
+        if(*(token = strtok(NULL, ",")) != "V")
         {
-            char dd[2] = {*token, *(token + 1)};
-            Location.latitude = atoi(dd) + atof(token + 2) / 60.0;
-            token = strtok(NULL, ",");
-            if (token != NULL && token[0] == 'S')
+            // 提取纬度
+            if (token != NULL)
             {
-                Location.latitude = -Location.latitude;
+                char dd[2] = {*token, *(token + 1)};
+                LocationG.latitude = atoi(dd) + atof(token + 2) / 60.0;
+                token = strtok(NULL, ",");
+                if (token != NULL && token[0] == 'S')
+                {
+                    LocationG.latitude = -LocationG.latitude;
+                }
             }
-        }
 
-        // 提取经度
-        token = strtok(NULL, ",");
-        if (token != NULL)
-        {
-            char dd[3] = {*token, *(token + 1), *(token + 2)};
-            Location.longitude = atoi(dd) + atof(token + 3) / 60.0;
+            // 提取经度
             token = strtok(NULL, ",");
+            if (token != NULL)
+            {
+                char dd[3] = {*token, *(token + 1), *(token + 2)};
+                LocationG.longitude = atoi(dd) + atof(token + 3) / 60.0;
+                token = strtok(NULL, ",");
+            }
             if (token != NULL && token[0] == 'W')
             {
-                Location.longitude = -Location.longitude;
+                LocationG.longitude = -LocationG.longitude;
             }
         }
     }
-    return Location;
+}
+
+GPS_Location GPS_Location_Get(void)
+{
+    return LocationG;
 }

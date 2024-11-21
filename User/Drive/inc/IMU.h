@@ -13,6 +13,7 @@ typedef struct
 {
    float AX,AY,Z;
    u16 t_ms;
+   u8 valid;
 } IMU_State;
 
 void IMU_Init(void);

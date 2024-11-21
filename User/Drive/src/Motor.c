@@ -29,13 +29,15 @@ void Motor_Init(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOA,&GPIO_InitStructure);
 
+    GPIO_WriteBit(GPIOA, GPIO_Pin_4, !FORWARD);
+
     TIM_TimeBaseInitStructure.TIM_Period = 100;
     TIM_TimeBaseInitStructure.TIM_Prescaler = 3599;
     TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
     TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
     TIM_TimeBaseInit(TIM2,&TIM_TimeBaseInitStructure);
 
-    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2;
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
     TIM_OCInitStructure.TIM_Pulse = 0;
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
@@ -89,5 +91,5 @@ u16 Motor_Get_PWM(void)
  */
 void Moter_Set_Direction(DIRECTIONS DIRECTION)
 {
-    GPIO_WriteBit(GPIOA, GPIO_Pin_4, DIRECTION);
+    GPIO_WriteBit(GPIOA, GPIO_Pin_4, !DIRECTION);
 }

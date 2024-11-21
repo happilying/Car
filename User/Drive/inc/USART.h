@@ -6,7 +6,7 @@
 #define USART1_RX_CH         DMA1_Channel5
 #define USART2_RX_CH         DMA1_Channel6
 #define USART3_RX_CH         DMA1_Channel3
-#define RX_BUFFER_LEN        (2048u)
+#define RX_BUFFER_LEN        (256u)
 
 typedef enum {
     UART1 = 1,
