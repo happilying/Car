@@ -8,7 +8,7 @@
 #define NMEA_SENTENCE_MAX_LENGTH 82
 #define GPS_bool u32
 #define GPS_MAX_SIZE 128
-#define GPS_baud 9600
+#define GPS_baud 115200
 
 /**
  * @brief 

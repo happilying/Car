@@ -60,6 +60,7 @@ IMU_State IMU_Get_Data(void)
     u8 Check = 0x55;
     if(Init == 0)
         UART_Clear_Buffer(IMU_UART);
+        IMU.valid = 2;
         return IMU;
     for(u8 j = 0;j <= 2;j++)
     {

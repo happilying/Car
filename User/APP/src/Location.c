@@ -30,6 +30,9 @@ void Location_Update(void)
         IMU_State IMU_Data = IMU_Get_Data();
         if(IMU_Data.valid == 0)
             continue;
+        else if (IMU_Data.valid == 2) {
+            break;
+        }
         float delta_t = (time <= IMU_Data.t_ms) ? (IMU_Data.t_ms - time) / 1000.0f : (1000 - time + IMU_Data.t_ms) / 1000.0f;
         if((delta_t > 0.01)&&j != 0)
         {

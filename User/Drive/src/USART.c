@@ -1,5 +1,6 @@
 #include "USART.h"
 #include "Location.h"
+#include "GPS.h"
 
 UART_Buffer UART_Buffer1 = {0},UART_Buffer2 = {0},UART_Buffer3 = {0};
 
@@ -422,9 +423,7 @@ void USART1_IRQHandler(void)
         UART_Buffer1.End_Counter = 0;
         USART_ReceiveData(USART1);
     }
-    #ifdef _GPS_H
     GPS_Location_Update();
-    #endif
 }
 
 void USART2_IRQHandler(void)
