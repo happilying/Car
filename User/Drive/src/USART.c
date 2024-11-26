@@ -1,6 +1,6 @@
 #include "USART.h"
 #include "Location.h"
-#include "GPS.h"
+//#include "GPS.h"
 
 UART_Buffer UART_Buffer1 = {0},UART_Buffer2 = {0},UART_Buffer3 = {0};
 
@@ -400,49 +400,54 @@ void UART_Set_Status(UARTS UART_Select, FunctionalState State)
         case UART1:
         {
             USART_Cmd(USART1, State);
+            break;
         }
         case UART2:
         {
             USART_Cmd(USART2, State);
+            break;
         }
         case UART3:
         {
             USART_Cmd(USART3, State);
+            break;
         }
     }
 }
 
 void USART1_IRQHandler(void)
 {
-    if((UART_Buffer1.End_Counter < UART_Buffer1.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH)) > UART_Buffer1.Start_Counter))
-        HardFault_Handler();
+//    if((UART_Buffer1.End_Counter < UART_Buffer1.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH)) > UART_Buffer1.Start_Counter))
+//        HardFault_Handler();
     if(USART_GetITStatus(USART1, USART_IT_IDLE) != RESET)
     {
         UART_Buffer1.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH);
         if(UART_Buffer1.End_Counter == RX_BUFFER_LEN)
         UART_Buffer1.End_Counter = 0;
+//        GPS_Location_Update();
         USART_ReceiveData(USART1);
     }
-    GPS_Location_Update();
+
 }
 
 void USART2_IRQHandler(void)
 {
-//    if((UART_Buffer2.End_Counter < UART_Buffer2.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH)) > UART_Buffer2.Start_Counter))
+//   if((UART_Buffer2.End_Counter < UART_Buffer2.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH)) > UART_Buffer2.Start_Counter))
 //        HardFault_Handler();
     if(USART_GetITStatus(USART2, USART_IT_IDLE) != RESET)
     {
         UART_Buffer2.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH);
         if(UART_Buffer2.End_Counter == RX_BUFFER_LEN)
         UART_Buffer2.End_Counter = 0;
+        Location_Update();
         USART_ReceiveData(USART2);
     }
 }
 
 void USART3_IRQHandler(void)
 {
-    if((UART_Buffer3.End_Counter < UART_Buffer3.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH)) > UART_Buffer3.Start_Counter))
-        HardFault_Handler();
+//    if((UART_Buffer3.End_Counter < UART_Buffer3.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH)) > UART_Buffer3.Start_Counter))
+//        HardFault_Handler();
     if(USART_GetITStatus(USART3, USART_IT_IDLE) != RESET)
     {
         UART_Buffer3.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH);
@@ -454,8 +459,8 @@ void USART3_IRQHandler(void)
 
 void DMA1_Channel5_IRQHandler(void)
 {
-    if((UART_Buffer1.End_Counter < UART_Buffer1.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH)) > UART_Buffer1.Start_Counter))
-        HardFault_Handler();
+//    if((UART_Buffer1.End_Counter < UART_Buffer1.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH)) > UART_Buffer1.Start_Counter))
+//        HardFault_Handler();
     UART_Buffer1.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH);
     if(UART_Buffer1.End_Counter == RX_BUFFER_LEN)
     UART_Buffer1.End_Counter = 0;
@@ -470,13 +475,13 @@ void DMA1_Channel6_IRQHandler(void)
     if(UART_Buffer2.End_Counter == RX_BUFFER_LEN)
     UART_Buffer2.End_Counter = 0;
     DMA_ClearITPendingBit(DMA1_IT_TC6 | DMA1_IT_HT6);
-    Location_Update();
+//    Location_Update();
 }
 
 void DMA1_Channel3_IRQHandler(void)
 {
-    if((UART_Buffer3.End_Counter < UART_Buffer3.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH)) > UART_Buffer3.Start_Counter))
-        HardFault_Handler();
+//    if((UART_Buffer3.End_Counter < UART_Buffer3.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH)) > UART_Buffer3.Start_Counter))
+//        HardFault_Handler();
     UART_Buffer3.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH);
     if(UART_Buffer3.End_Counter == RX_BUFFER_LEN)
     UART_Buffer3.End_Counter = 0;

@@ -22,8 +22,11 @@ void IMU_Init(void)
     UART_Set_baudrate(IMU_UART, IMU_Baudrate);
     UART_Send_Array(IMU_UART,Unlock,sizeof(Unlock));
     Delay_Ms(200);
+    UART_Send_Array(IMU_UART,No,sizeof(No));
+    Delay_Ms(200);
     UART_Send_Array(IMU_UART,Save,sizeof(Save));
     Delay_Ms(200);
+    UART_Clear_Buffer(IMU_UART);
     UART_Send_Array(IMU_UART,Unlock,sizeof(Unlock));
     Delay_Ms(200);
     UART_Send_Array(IMU_UART,Z_Calibration,sizeof(Z_Calibration));
@@ -42,8 +45,8 @@ void IMU_Init(void)
     Delay_Ms(200);
     UART_Send_Array(IMU_UART,Save,sizeof(Save));
     Delay_Ms(200);
-    UART_Clear_Buffer(IMU_UART);
     Init = 1;
+    UART_Clear_Buffer(IMU_UART);
 }
 
 /**
@@ -59,25 +62,26 @@ IMU_State IMU_Get_Data(void)
     u8 buffer[9] = {0};
     u8 Check = 0x55;
     if(Init == 0)
+    {
         UART_Clear_Buffer(IMU_UART);
-        IMU.valid = 2;
         return IMU;
+    }
     for(u8 j = 0;j <= 2;j++)
     {
-        if(UART_Get_Length(IMU_UART) < 33)
+        if(UART_Get_Length(IMU_UART) < 33 && j == 0)
         {
             break;
         }
         while(UART_Get_Data(IMU_UART) != 0x55)
         {
-            if(UART_Get_Length(IMU_UART) == 0)
+            if(UART_Get_Length(IMU_UART) < 11)
             {
                 break;
                 break;
             }
         }
         Check = 0x55;
-        for(u8 i = 0;i <= (sizeof(buffer) - 1);i++)
+        for(u8 i = 0;i < sizeof(buffer);i++)
         {
             buffer[i] = UART_Get_Data(IMU_UART);
             Check += buffer[i];
@@ -88,19 +92,33 @@ IMU_State IMU_Get_Data(void)
             {
                 case ACC:
                 {
+                    if(j == 0)
+                    {
+                        break;
+                        break;
+                    }
                     IMU.AX = ((int16_t)(buffer[1]|(buffer[2] << 8))) / 32768.0f * 16 * 9.8f;
                     IMU.AY = ((int16_t)(buffer[3]|(buffer[4] << 8))) / 32768.0f * 16 * 9.8f;
                     break;
                 }
                 case ANG:
                 {
+                    if(j == 0)
+                    {
+                        break;
+                        break;
+                    }
                     IMU.Z = ((int16_t)(buffer[5]|(buffer[6] << 8))) / 32768.0f * 180;
                     break;
                 }
                 case TIME:
                 {
+                    if(buffer[1] != 0 || buffer[2] != 0)
+                    {
+                        break;
+                        break;
+                    }
                     IMU.t_ms = (u16)(buffer[7]|(buffer[8] << 8));
-                    j = 0;
                     break;
                 }
                 default:return IMU;
@@ -108,6 +126,7 @@ IMU_State IMU_Get_Data(void)
             if(j == 2)
                 IMU.valid = 1;
         }
+        else break;
     }
     return IMU;
 }

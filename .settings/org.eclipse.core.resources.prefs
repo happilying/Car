@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//User/APP/inc/Location.h=UTF-8
+encoding//User/APP/src/Driving.c=UTF-8
 encoding//User/Drive/src/GPS.c=UTF-8
 encoding//User/Drive/src/IMU.c=UTF-8
 encoding//User/Drive/src/Motor.c=UTF-8

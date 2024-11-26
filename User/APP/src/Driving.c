@@ -29,7 +29,7 @@ float current_angle = 0.0; // 跟踪汽车当前的方向角度
 int main()
 {
     // 初始化组件
-    LOCATION_Init();
+    Location_Init();
     Ranging_Init();
     Motor_Init();
     Route_Init();
@@ -45,10 +45,10 @@ int main()
     navigation_to_next_checkpoint(1); // 导航到 C 点（仅限右侧障碍物）
     drive_3s();                       // 通过门
 
-    navigate_to_next_checkpoint(0); // 导航到 D 点（两边都有障碍物）
+    navigation_to_next_checkpoint(0); // 导航到 D 点（两边都有障碍物）
     drive_3s();                     // 通过门
 
-    navigate_to_next_checkpoint(0); // 返回 A 点
+    navigation_to_next_checkpoint(0); // 返回 A 点
     drive_3s();                     // 通过门
 
     stop_car(); // 完成循环后停止汽车

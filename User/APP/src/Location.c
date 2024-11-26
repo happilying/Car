@@ -5,7 +5,7 @@ Speeds Speed = {0};
 u16 time = 0;
 Locations Location = {0};
 float A_X0 = 0,A_Y0 = 0;
-u8 j = 0;
+u8 IsFirst = 1;
 
 #ifdef USE_GPS
 GPS_Location GPS_0 = {0};
@@ -25,37 +25,39 @@ void Location_Init(void)
 
 void Location_Update(void)
 {
-    while(UART_Get_Length(IMU_UART) != 0)
+    while(UART_Get_Length(IMU_UART) >= 33)
     {
-        IMU_State IMU_Data = IMU_Get_Data();
-        if(IMU_Data.valid == 0)
+        volatile IMU_State IMU_Data = IMU_Get_Data();
+        if (IMU_Data.valid != 1)
+        {
             continue;
-        else if (IMU_Data.valid == 2) {
-            break;
         }
         float delta_t = (time <= IMU_Data.t_ms) ? (IMU_Data.t_ms - time) / 1000.0f : (1000 - time + IMU_Data.t_ms) / 1000.0f;
-        if((delta_t > 0.01)&&j != 0)
+        if((delta_t > 0.01 || delta_t <= 0.001) && IsFirst != 1)
         {
-            DMA_Cmd(USART2_RX_CH,DISABLE);
-            HardFault_Handler();
+            UART_Clear_Buffer(IMU_UART);
+            time = IMU_Data.t_ms;
+            continue;
         }
         time = IMU_Data.t_ms;
-        float A_X = -IMU_Data.AX * cosf(IMU_Data.Z * M_PI/180) - IMU_Data.AY * sinf(IMU_Data.Z * M_PI / 180);
-        float A_Y = -IMU_Data.AY * cosf(IMU_Data.Z * M_PI/180) - IMU_Data.AX * sinf(IMU_Data.Z * M_PI / 180);
+        float A_X = IMU_Data.AY * cosf(IMU_Data.Z * M_PI/180) + IMU_Data.AX * sinf(IMU_Data.Z * M_PI / 180);
+        float A_Y = IMU_Data.AX * cosf(IMU_Data.Z * M_PI/180) - IMU_Data.AY * sinf(IMU_Data.Z * M_PI / 180);
         Location.RZ = IMU_Data.Z;
-        if(j == 0)
-        {
-            j = 1;
-            break;
-        }
         float V_X0 = Speed.VX;
         float V_Y0 = Speed.VY;
+        if(IsFirst)
+        {
+            A_X0 = A_X;
+            A_Y0 = A_Y;
+            IsFirst = 0;
+            continue;
+        }
         Speed.VX = Speed.VX + delta_t * (A_X0 + A_X) / 2;
         Speed.VY = Speed.VX + delta_t * (A_Y0 + A_Y) / 2;
-        Location.X = Location.X + delta_t * (V_X0 + Speed.VX) / 2;
-        Location.Y = Location.Y + delta_t * (V_Y0 + Speed.VY) / 2;
         A_X0 = A_X;
         A_Y0 = A_Y;
+        Location.X = Location.X + delta_t * (V_X0 + Speed.VX) / 2;
+        Location.Y = Location.Y + delta_t * (V_Y0 + Speed.VY) / 2;
     }
 
     #ifdef USE_GPS

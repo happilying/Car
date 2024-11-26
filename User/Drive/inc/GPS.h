@@ -16,7 +16,7 @@
  */
 typedef struct
 {
-    float latitude,///<纬度
+    double latitude,///<纬度
     longitude;///<经度
 } GPS_Location;
 
