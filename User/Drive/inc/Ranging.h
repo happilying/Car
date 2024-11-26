@@ -35,8 +35,5 @@ typedef struct
 
 void Ranging_Init(void);
 Distances Ranging_Get_Distance(void);
-uint16_t Calculate_CRC(uint8_t *data, uint8_t length);
-char *Ranging_CreateReadDistanceMessage(uint8_t device_id);
-int Ranging_VerifyReadDistanceResponse(uint8_t device_id);
 
 #endif

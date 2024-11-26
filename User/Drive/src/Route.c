@@ -42,16 +42,17 @@ void Route_Init(void)
 }
 
 /**
- * @fn      Set_Angle
+ * @fn      Route_Set_Angle
  *
  * @brief   设置舵机转动角度
  *
- * @param   Angle 角度
+ * @param   Angle 角度(-90~90度)
  * 
  * @return none
  */
-void Set_Angle(u16 Angle)
+void Route_Set_Angle(float Angles)
 {
+    u16 Angle = (Angles + 90)/360 * 200 + 50;
     if(Angle > MAX_ROTATION)
     Angle = MAX_ROTATION;
     else if(Angle < MIN_ROTATION)
@@ -60,13 +61,13 @@ void Set_Angle(u16 Angle)
 }
 
 /**
- * @fn      Get_Angle
+ * @fn      Route_Get_Angle
  *
  * @brief   获取舵机的当前角度
  * 
- * @return  角度
+ * @return  角度(-90~90度)
  */
-u16 Get_Angle(void)
+float Route_Get_Angle(void)
 {
-    return TIM_GetCapture1(TIM4);
+    return (TIM_GetCapture1(TIM4) - 50.0f)/200 * 360 - 90;
 }
