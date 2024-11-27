@@ -20,7 +20,7 @@
  */
 typedef struct
 {
-    float X,Y,RZ;
+    float X,Y,RZ,dt;
 } Locations;
 
 typedef struct

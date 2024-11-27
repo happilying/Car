@@ -1,11 +1,15 @@
 #include "LOCATION.h"
 #include <math.h>
 
+#include <string.h>
+#include <stdio.h>
+
 Speeds Speed = {0};
 u16 time = 0;
 Locations Location = {0};
 float A_X0 = 0,A_Y0 = 0;
 u8 IsFirst = 1;
+u8 j = 48;
 
 #ifdef USE_GPS
 GPS_Location GPS_0 = {0};
@@ -15,6 +19,7 @@ extern void HardFault_Handler(void);
 
 void Location_Init(void)
 {
+    UART_Init(UART1,115200);
     IMU_Init();
 
     #ifdef USE_GPS
@@ -27,12 +32,15 @@ void Location_Update(void)
 {
     while(UART_Get_Length(IMU_UART) >= 33)
     {
-        volatile IMU_State IMU_Data = IMU_Get_Data();
-        if (IMU_Data.valid != 1)
+        IMU_State IMU_Data = IMU_Get_Data();
+        if (IMU_Data.valid != 2)
         {
             continue;
         }
         float delta_t = (time <= IMU_Data.t_ms) ? (IMU_Data.t_ms - time) / 1000.0f : (1000 - time + IMU_Data.t_ms) / 1000.0f;
+        char s[50];
+        int len = sprintf(s,"%d,%d,%d,%d,%d\r\n",(int)(IMU_Data.AX * 1000),(int)(IMU_Data.AY * 1000),IMU_Data.t_ms,IMU_Data.valid,(int)(delta_t * 100));
+        UART_Send_Array(UART1, s, len);
         if((delta_t > 0.01 || delta_t <= 0.001) && IsFirst != 1)
         {
             UART_Clear_Buffer(IMU_UART);
@@ -58,6 +66,7 @@ void Location_Update(void)
         A_Y0 = A_Y;
         Location.X = Location.X + delta_t * (V_X0 + Speed.VX) / 2;
         Location.Y = Location.Y + delta_t * (V_Y0 + Speed.VY) / 2;
+        Location.dt = delta_t;
     }
 
     #ifdef USE_GPS

@@ -66,22 +66,23 @@ IMU_State IMU_Get_Data(void)
         UART_Clear_Buffer(IMU_UART);
         return IMU;
     }
+    get:if(UART_Get_Length(IMU_UART) < 33)
+        return IMU;
     for(u8 j = 0;j <= 2;j++)
     {
-        if(UART_Get_Length(IMU_UART) < 33 && j == 0)
-        {
-            break;
-        }
+        IMU.valid = j;
         while(UART_Get_Data(IMU_UART) != 0x55)
         {
-            if(UART_Get_Length(IMU_UART) < 11)
+            if(UART_Get_Length(IMU_UART) < 33 - 11 * j - 1)
             {
-                break;
-                break;
+                return IMU;
             }
         }
-        Check = 0x55;
-        for(u8 i = 0;i < sizeof(buffer);i++)
+        buffer[0] = UART_Get_Data(IMU_UART);
+        if(buffer[0] != TIME && j == 0) 
+            goto get;
+        Check = 0x55 + buffer[0];
+        for(u8 i = 1;i < sizeof(buffer);i++)
         {
             buffer[i] = UART_Get_Data(IMU_UART);
             Check += buffer[i];
@@ -92,39 +93,24 @@ IMU_State IMU_Get_Data(void)
             {
                 case ACC:
                 {
-                    if(j == 0)
-                    {
-                        break;
-                        break;
-                    }
                     IMU.AX = ((int16_t)(buffer[1]|(buffer[2] << 8))) / 32768.0f * 16 * 9.8f;
                     IMU.AY = ((int16_t)(buffer[3]|(buffer[4] << 8))) / 32768.0f * 16 * 9.8f;
                     break;
                 }
                 case ANG:
                 {
-                    if(j == 0)
-                    {
-                        break;
-                        break;
-                    }
                     IMU.Z = ((int16_t)(buffer[5]|(buffer[6] << 8))) / 32768.0f * 180;
                     break;
                 }
                 case TIME:
                 {
-                    if(buffer[1] != 0 || buffer[2] != 0)
-                    {
-                        break;
-                        break;
-                    }
                     IMU.t_ms = (u16)(buffer[7]|(buffer[8] << 8));
                     break;
                 }
                 default:return IMU;
             }
-            if(j == 2)
-                IMU.valid = 1;
+//            if(j == 2)
+//                IMU.valid = 1;
         }
         else break;
     }
