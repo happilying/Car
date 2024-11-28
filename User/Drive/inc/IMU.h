@@ -11,9 +11,9 @@
 
 typedef struct
 {
-   float AX,AY,Z;
-   u16 t_ms;
-   u8 valid;
+   float AX,AY,Z;//X,Y加速度与Z旋转
+   u16 t_ms;//时间戳
+   u8 valid;//包有效表示，0为无效
 } IMU_State;
 
 void IMU_Init(void);

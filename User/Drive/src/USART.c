@@ -18,11 +18,13 @@ extern void HardFault_Handler(void);
  */
 void UART_Init(UARTS UART_Select,u32 baudrate)
 {
+    //初始化结构体定义
     DMA_InitTypeDef  DMA_InitStructure = {0};
     GPIO_InitTypeDef  GPIO_InitStructure = {0};
     USART_InitTypeDef USART_InitStructure = {0};
     NVIC_InitTypeDef  NVIC_InitStructure = {0};
 
+    //DMA时钟使能
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
     //共用DMA结构体值定义
@@ -182,11 +184,11 @@ void UART_Init(UARTS UART_Select,u32 baudrate)
 /**
  * @fn      UART_Clear_Buffer
  *
- * @brief   
+ * @brief   清除指定UART的缓冲区
  *
  * @param   UART_Select 指定UASRT
  * 
- * @return none
+ * @return  none
  */
 void UART_Clear_Buffer(UARTS UART_Select)
 {
@@ -233,12 +235,11 @@ void UART_Send_Data(UARTS UART_Select,u8 Data)
 }
 
 /**
- * @fn      UART_Get_Data_With_Position
+ * @fn      UART_Get_Data
  *
  * @brief   从缓冲区获取1字节的数据
  *
  * @param   UART_Select 指定USART
- * @param   position    位置
  *
  * @return  获取的数据
  */
@@ -280,6 +281,16 @@ u8 UART_Get_Data(UARTS UART_Select)
     return data;
 }
 
+/**
+ * @fn      UART_Get_Data_With_Position
+ *
+ * @brief   从缓冲区获取1字节的数据
+ *
+ * @param   UART_Select 指定USART
+ * @param   position    位置
+ *
+ * @return  获取的数据
+ */
 u8 UART_Get_Data_With_Position(UARTS UART_Select, int position)
 {
     if(UART_Get_Length(UART_Select) < position)
@@ -393,6 +404,15 @@ void UART_Set_baudrate(UARTS UART_Select,u32 baudrate)
     }
 }
 
+/**
+ * @fn      UART_Set_Status
+ *
+ * @brief   更改UART状态
+ *
+ * @param   State 将要更新的状态
+ * 
+ * @return  none
+ */
 void UART_Set_Status(UARTS UART_Select, FunctionalState State)
 {
     switch(UART_Select)
@@ -462,8 +482,8 @@ void DMA1_Channel5_IRQHandler(void)
 void DMA1_Channel6_IRQHandler(void)
 {
     DMA_ClearITPendingBit(DMA1_IT_TC6 | DMA1_IT_HT6);
-    if((UART_Buffer2.End_Counter < UART_Buffer2.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH)) > UART_Buffer2.Start_Counter))
-        HardFault_Handler();
+//    if((UART_Buffer2.End_Counter < UART_Buffer2.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH)) > UART_Buffer2.Start_Counter))
+//        HardFault_Handler();
     UART_Buffer2.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH);
 //    Location_Update();
 }

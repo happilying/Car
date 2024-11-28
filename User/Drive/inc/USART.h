@@ -15,9 +15,9 @@ typedef enum {
 } UARTS;
 
 typedef struct{
-    volatile uint16_t Start_Counter;
-    volatile uint16_t End_Counter;
-    uint8_t RX_Buffer[RX_BUFFER_LEN];
+    volatile uint16_t Start_Counter;//读指针
+    volatile uint16_t End_Counter;//写指针
+    uint8_t RX_Buffer[RX_BUFFER_LEN];//缓冲区
 } UART_Buffer;
 
 void USART1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));

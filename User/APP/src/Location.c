@@ -17,6 +17,13 @@ GPS_Location GPS_0 = {0};
 
 extern void HardFault_Handler(void);
 
+/**
+ * @fn      Location_Init
+ *
+ * @brief   初始化Location应用
+ *
+ * @return none
+ */
 void Location_Init(void)
 {
     UART_Init(UART1,115200);
@@ -28,6 +35,13 @@ void Location_Init(void)
     #endif
 }
 
+/**
+ * @fn      Location_Update
+ *
+ * @brief   更新位置信息
+ *
+ * @return none
+ */
 void Location_Update(void)
 {
     while(UART_Get_Length(IMU_UART) >= 33)
@@ -84,6 +98,13 @@ void Location_Update(void)
     #endif
 }
 
+/**
+ * @fn      Location_Get
+ *
+ * @brief   获取当前位置信息
+ * 
+ * @return  Locations结构体
+ */
 Locations Location_Get(void)
 {
     return Location;

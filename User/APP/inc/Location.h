@@ -20,7 +20,7 @@
  */
 typedef struct
 {
-    float X,Y,RZ,dt;
+    float X,Y,RZ,dt;//X位置（前方），Y位置，旋转（顺时针为正）。
 } Locations;
 
 typedef struct
