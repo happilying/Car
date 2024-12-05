@@ -37,6 +37,7 @@ void NMI_Handler(void)
  */
 void HardFault_Handler(void)
 {
-    UART_Send_Array(UART1, "Hardfault!\r\n", strlen("Hardfault!\r\n"));
-    while(1);
+    while(1)
+    {
+    }
 }

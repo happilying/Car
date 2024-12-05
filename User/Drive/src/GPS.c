@@ -35,8 +35,6 @@ void GPS_Location_Update(void)
             {
                 // 接收到完整的NMEA语句
                 nmeaSentence[i] = '\0';
-                UART_Set_Status(GPS_UART, DISABLE);
-                UART_Clear_Buffer(GPS_UART);
                 break;
             }
             else if (i < NMEA_SENTENCE_MAX_LENGTH - 1)
@@ -56,7 +54,7 @@ void GPS_Location_Update(void)
         {
             token = strtok(NULL, ",");
         }
-        if(!strncmp(token,"V",1))
+        if(strncmp(token,"V",1))
         {
             token = strtok(NULL, ",");
             // 提取纬度

@@ -3,7 +3,7 @@
 
 #define MAX_ROTATION 175
 #define MIN_ROTATION 75
-#define CENTER (MAX_ROTATION+MIN_ROTATION)/2 - 1
+#define CENTER (MAX_ROTATION+MIN_ROTATION)/2 - 3
 
 #include "ch32v10x.h"
 

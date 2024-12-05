@@ -195,7 +195,7 @@ USBFS_IRQHandler:
 handle_reset:
 .option push 
 .option	norelax 
-	la gp, __global_pointer$
+  	la gp, __global_pointer$
 .option	pop 
 1:
 	la sp, _eusrstack 
