@@ -7,28 +7,32 @@
  * 
  */
 #include "Motor.h"
-//#include "Route.h"
-//#include "Ranging.h"
+#include "Route.h"
 #include "Location.h"
-#include "USART.h"
-// #include "GPS.h"
+
+// #include <string.h>
+// #include <stdio.h>
 
 int main(void)
 {
+
    Location_Init();
    Motor_Init();
-//   Motor_Set_PWM(30);
-   Locations Location12 = {0};
-   while(Location12.X <= 0.5 && Location12.X >= -0.5)
+   Route_Init();
+   Motor_Set_PWM(40);
+   Locations Location1 = {0};
+   while(Location1.X <= 5 && Location1.X >= -5)
    {
-       Location12 = Location_Get();
-       Delay_Ms(500);
+      Location1 = Location_Get();
+      char s[50];
+      int len = sprintf(s,"%d\r\n",(int)(Location1.X * 1000));
+      UART_Send_Array(UART3, s, len);
+      Delay_Ms(500);
    }
-//   Motor_Set_PWM(0);
-   while(1);
     // GPS_Init();
     // while(1)
     // {
     //     volatile GPS_Location GPS = GPS_Location_Get();
     // }
+   Motor_Set_PWM(0);
 }

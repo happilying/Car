@@ -93,3 +93,17 @@ void Moter_Set_Direction(DIRECTIONS DIRECTION)
 {
     GPIO_WriteBit(GPIOA, GPIO_Pin_4, !DIRECTION);
 }
+
+void Motor_Set_Speed(float SpeedM)
+{
+    if(SpeedM < MIN_SPEED)
+        SpeedM = MIN_SPEED;
+    if(SpeedM > MAX_SPEED)
+        SpeedM = MAX_SPEED;
+    Motor_Set_PWM(A * (SpeedM - MIN_SPEED) + MIN_PWM);
+}
+
+float Motor_Get_Speed(void)
+{
+    return ((float)Motor_Get_PWM() - MIN_PWM)/A + MIN_SPEED;
+}

@@ -13,7 +13,5 @@
 #define __CH32V10x_IT_H
 
 #include "debug.h"
-#include "USART.h"
-#include <string.h>
 
 #endif /* __CH32V10x_IT_H */

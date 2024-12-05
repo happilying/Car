@@ -1,6 +1,5 @@
 #include "USART.h"
 #include "Location.h"
-//#include "GPS.h"
 
 UART_Buffer UART_Buffer1 = {0},UART_Buffer2 = {0},UART_Buffer3 = {0};
 
@@ -43,16 +42,18 @@ void UART_Init(UARTS UART_Select,u32 baudrate)
     {
         case UART1:
         {
-            RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA, ENABLE);
+            RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
 
-            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+            GPIO_PinRemapConfig(GPIO_Remap_USART1,ENABLE);
+
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
             GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-            GPIO_Init(GPIOA, &GPIO_InitStructure);
+            GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+            GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-            GPIO_Init(GPIOA, &GPIO_InitStructure);
+            GPIO_Init(GPIOB, &GPIO_InitStructure);
             break;
         }
         case UART2:
@@ -443,7 +444,9 @@ void USART1_IRQHandler(void)
     {
         USART_ReceiveData(USART1);
         UART_Buffer1.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH);
-//        GPS_Location_Update();
+        #ifdef _GPS_H
+        GPS_Location_Update();
+        #endif
     }
 
 }
@@ -456,7 +459,9 @@ void USART2_IRQHandler(void)
     {
         USART_ReceiveData(USART2);
         UART_Buffer2.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH);
+        #ifdef _LOCATION_H
         Location_Update();
+        #endif
     }
 }
 
@@ -485,7 +490,6 @@ void DMA1_Channel6_IRQHandler(void)
 //    if((UART_Buffer2.End_Counter < UART_Buffer2.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH)) > UART_Buffer2.Start_Counter))
 //        HardFault_Handler();
     UART_Buffer2.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH);
-//    Location_Update();
 }
 
 void DMA1_Channel3_IRQHandler(void)

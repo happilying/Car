@@ -52,7 +52,7 @@ void Route_Init(void)
  */
 void Route_Set_Angle(float Angles)
 {
-    u16 Angle = (Angles + 90)/360 * 200 + 50;
+    u8 Angle = Angles / 45 * 50 + CENTER;
     if(Angle > MAX_ROTATION)
     Angle = MAX_ROTATION;
     else if(Angle < MIN_ROTATION)
@@ -69,5 +69,5 @@ void Route_Set_Angle(float Angles)
  */
 float Route_Get_Angle(void)
 {
-    return (TIM_GetCapture1(TIM4) - 50.0f)/200 * 360 - 90;
+    return ((int)TIM_GetCapture1(TIM4) - CENTER)/50.0f * 45;
 }

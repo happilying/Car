@@ -26,25 +26,25 @@ void IMU_Init(void)
     Delay_Ms(200);
     UART_Send_Array(IMU_UART,Save,sizeof(Save));
     Delay_Ms(200);
-    UART_Clear_Buffer(IMU_UART);
+    UART_Clear_Buffer(IMU_UART);//更改比特率并不回传防止缓冲区溢出，最后清除缓冲区
     UART_Send_Array(IMU_UART,Unlock,sizeof(Unlock));
     Delay_Ms(200);
     UART_Send_Array(IMU_UART,Z_Calibration,sizeof(Z_Calibration));
     Delay_Ms(3000);
     UART_Send_Array(IMU_UART,Save,sizeof(Save));
-    Delay_Ms(200);
+    Delay_Ms(200);//Z轴校准
     UART_Send_Array(IMU_UART,Unlock,sizeof(Unlock));
     Delay_Ms(200);
     UART_Send_Array(IMU_UART,ACC_Calibration,sizeof(ACC_Calibration));
     Delay_Ms(5000);
     UART_Send_Array(IMU_UART,Save,sizeof(Save));
-    Delay_Ms(200);
+    Delay_Ms(200);//加速度计校准
     UART_Send_Array(IMU_UART,Unlock,sizeof(Unlock));
     Delay_Ms(200);
     UART_Send_Array(IMU_UART,Hz,sizeof(Hz));
     Delay_Ms(200);
     UART_Send_Array(IMU_UART,Save,sizeof(Save));
-    Delay_Ms(200);
+    Delay_Ms(200);//回传速率设置
     Init = 1;
     UART_Clear_Buffer(IMU_UART);
 }
@@ -65,8 +65,8 @@ IMU_State IMU_Get_Data(void)
     {
         UART_Clear_Buffer(IMU_UART);
         return IMU;
-    }
-    get:if(UART_Get_Length(IMU_UART) < 33)
+    }//处理未初始化完成回传数据
+    get:if(UART_Get_Length(IMU_UART) < 33)//判断长度是否大于一帧
         return IMU;
     for(u8 j = 0;j <= 2;j++)
     {

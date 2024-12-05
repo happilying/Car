@@ -2,16 +2,12 @@
 #define _LOCATION_H
 
 #include "IMU.h"
+#include "Coder.h"
 
 #define M_LONG 0.00001174
 #define M_LATI 0.00000899
 
-//如果使用GPS，取消注释
-//#define USE_GPS
-
-#ifdef USE_GPS
 #include "GPS.h"
-#endif
 
 /**
  * @struct
@@ -20,7 +16,7 @@
  */
 typedef struct
 {
-    float X,Y,RZ,dt;//X位置（前方），Y位置，旋转（顺时针为正）。
+    float X,Y,RZ;//X位置（前方），Y位置，旋转（顺时针为正）。
 } Locations;
 
 typedef struct
