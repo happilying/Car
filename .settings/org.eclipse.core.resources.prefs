@@ -4,6 +4,7 @@ encoding//User/APP/src/Driving.c=UTF-8
 encoding//User/APP/src/Location.c=UTF-8
 encoding//User/Drive/inc/Command_IMU.h=UTF-8
 encoding//User/Drive/inc/IMU.h=UTF-8
+encoding//User/Drive/inc/USART.h=UTF-8
 encoding//User/Drive/src/GPS.c=UTF-8
 encoding//User/Drive/src/IMU.c=UTF-8
 encoding//User/Drive/src/Motor.c=UTF-8

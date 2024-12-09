@@ -1,6 +1,10 @@
 #include "Ranging.h"
 #include <string.h>
 
+static char message[8] = {0};
+static Distances result = {0, 0};
+static u8 IsLeft = 1;
+
 void Ranging_Init(void)
 {
     UART_Init(Ranging_UART, Ranging_Baudrate);
@@ -36,9 +40,8 @@ uint16_t Calculate_CRC(uint8_t *data, uint8_t length)
 // 00 34: 寄存器地址
 // 00 01: 寄存器数量
 // C8 45: CRC校验
-char *Ranging_CreateReadDistanceMessage(uint8_t device_id)
+void Ranging_CreateReadDistanceMessage(uint8_t device_id)
 {
-    static char message[8] = {0};
     uint16_t crc = 0;
 
     message[0] = device_id;
@@ -51,8 +54,6 @@ char *Ranging_CreateReadDistanceMessage(uint8_t device_id)
     crc = Calculate_CRC((uint8_t *)message, 6);
     message[6] = crc & 0xFF;
     message[7] = (crc >> 8) & 0xFF;
-
-    return message;
 }
 
 // 例子
@@ -81,43 +82,47 @@ int Ranging_VerifyReadDistanceResponse(uint8_t device_id)
  * 
  * @return Distances 
  */
-Distances Ranging_Get_Distance(void)
+void Ranging_Update(void)
 {
-    Distances result = {0, 0};
 
-    char *readMessageLeft = Ranging_CreateReadDistanceMessage(LEFT_DEVICE_ID);
-    char *readMessageRight = Ranging_CreateReadDistanceMessage(RIGHT_DEVICE_ID);
-
+    UART_Clear_Buffer(Ranging_UART);
     //
     //
     // Process the left device
-    if (*readMessageLeft)
-        UART_Send_Array(Ranging_UART, (u8 *)readMessageLeft, 8);
 
-    while (Ranging_VerifyReadDistanceResponse(LEFT_DEVICE_ID) == 0)
-        ;
-
-    if (Ranging_VerifyReadDistanceResponse(LEFT_DEVICE_ID))
+    if(IsLeft)
     {
-        // Extract the distance value
-        uint16_t distance = (UART_Get_Data_With_Position(Ranging_UART, 3) << 8) | UART_Get_Data_With_Position(Ranging_UART, 4);
-        result.Left = distance;
-    }
+        Ranging_CreateReadDistanceMessage(LEFT_DEVICE_ID);
+        UART_Send_Array(Ranging_UART,message,sizeof(message));
+        while (UART_Get_Length(Ranging_UART) == 0)
+        {
 
+        }
+        // Extract the distance value
+        result.Left = (UART_Get_Data_With_Position(Ranging_UART, 3) << 8) | UART_Get_Data(Ranging_UART);
+
+        UART_Clear_Buffer(Ranging_UART);
+    }
     //
     //
     // Process the right device
-    if (*readMessageRight)
-        UART_Send_Array(Ranging_UART, (u8 *)readMessageRight, sizeof(readMessageRight));
-
-    while (Ranging_VerifyReadDistanceResponse(RIGHT_DEVICE_ID) == 0)
-        ;
-
+    else
+    {
+        Ranging_CreateReadDistanceMessage(RIGHT_DEVICE_ID);
+        UART_Send_Array(Ranging_UART,message,sizeof(message));
+        while (UART_Get_Length(Ranging_UART) != 7)
+        {
+        }
     // Extract the distance value
-    uint16_t distance = (UART_Get_Data_With_Position(Ranging_UART, 3) << 8) | UART_Get_Data_With_Position(Ranging_UART, 4);
-    result.Left = distance;
+        result.right = (UART_Get_Data_With_Position(Ranging_UART, 3) << 8) | UART_Get_Data(Ranging_UART);
 
     // TODO: Verify the state
+        UART_Clear_Buffer(Ranging_UART);
+    }
+    IsLeft = !IsLeft;
+}
 
+Distances Ranging_Get_Distance(void)
+{
     return result;
 }

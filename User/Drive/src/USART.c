@@ -1,7 +1,7 @@
 #include "USART.h"
 #include "Location.h"
 
-UART_Buffer UART_Buffer1 = {0},UART_Buffer2 = {0},UART_Buffer3 = {0};
+static UART_Buffer UART_Buffer1 = {0},UART_Buffer2 = {0},UART_Buffer3 = {0};
 
 extern void HardFault_Handler(void);
 
@@ -91,8 +91,10 @@ void UART_Init(UARTS UART_Select,u32 baudrate)
 
     //中断仲裁器共用结构体值定义
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority        = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority        = 2;
     NVIC_InitStructure.NVIC_IRQChannelCmd                = ENABLE;
+
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 
     //USART共用结构体值定义
     USART_InitStructure.USART_BaudRate = baudrate;
@@ -111,6 +113,7 @@ void UART_Init(UARTS UART_Select,u32 baudrate)
             USART_Init(USART1, &USART_InitStructure);
             USART_ITConfig(USART1, USART_IT_IDLE, ENABLE);
 
+            NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
             NVIC_InitStructure.NVIC_IRQChannel                   = USART1_IRQn;
 
             NVIC_Init(&NVIC_InitStructure);
@@ -161,6 +164,7 @@ void UART_Init(UARTS UART_Select,u32 baudrate)
             USART_Init(USART3, &USART_InitStructure);
             USART_ITConfig(USART3, USART_IT_IDLE, ENABLE);
 
+            NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
             NVIC_InitStructure.NVIC_IRQChannel                   = USART3_IRQn;
             NVIC_Init(&NVIC_InitStructure);
             USART_Cmd(USART3, ENABLE);
@@ -176,10 +180,12 @@ void UART_Init(UARTS UART_Select,u32 baudrate)
             
             DMA_Cmd(USART3_RX_CH, ENABLE);
             USART_DMACmd(USART3, USART_DMAReq_Rx, ENABLE);
+
             break;
         }
         default:break;
     }
+    UART_Clear_Buffer(UART_Select);
 }
 
 /**
@@ -444,6 +450,8 @@ void USART1_IRQHandler(void)
     {
         USART_ReceiveData(USART1);
         UART_Buffer1.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH);
+        if(UART_Buffer1.End_Counter == RX_BUFFER_LEN)
+            UART_Buffer1.End_Counter = 0;
         #ifdef _GPS_H
         GPS_Location_Update();
         #endif
@@ -459,6 +467,8 @@ void USART2_IRQHandler(void)
     {
         USART_ReceiveData(USART2);
         UART_Buffer2.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH);
+        if(UART_Buffer2.End_Counter == RX_BUFFER_LEN)
+            UART_Buffer2.End_Counter = 0;
         #ifdef _LOCATION_H
         Location_Update();
         #endif
@@ -473,6 +483,8 @@ void USART3_IRQHandler(void)
     {
         USART_ReceiveData(USART3);
         UART_Buffer3.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH);
+        if(UART_Buffer3.End_Counter == RX_BUFFER_LEN)
+            UART_Buffer3.End_Counter = 0;
     }
 }
 
@@ -482,6 +494,8 @@ void DMA1_Channel5_IRQHandler(void)
 //    if((UART_Buffer1.End_Counter < UART_Buffer1.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH)) > UART_Buffer1.Start_Counter))
 //        HardFault_Handler();
     UART_Buffer1.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART1_RX_CH);
+    if(UART_Buffer1.End_Counter == RX_BUFFER_LEN)
+        UART_Buffer1.End_Counter = 0;
 }
 
 void DMA1_Channel6_IRQHandler(void)
@@ -490,6 +504,8 @@ void DMA1_Channel6_IRQHandler(void)
 //    if((UART_Buffer2.End_Counter < UART_Buffer2.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH)) > UART_Buffer2.Start_Counter))
 //        HardFault_Handler();
     UART_Buffer2.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART2_RX_CH);
+    if(UART_Buffer2.End_Counter == RX_BUFFER_LEN)
+        UART_Buffer2.End_Counter = 0;
 }
 
 void DMA1_Channel3_IRQHandler(void)
@@ -498,4 +514,6 @@ void DMA1_Channel3_IRQHandler(void)
 //    if((UART_Buffer3.End_Counter < UART_Buffer3.Start_Counter) && ((RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH)) > UART_Buffer3.Start_Counter))
 //        HardFault_Handler();
     UART_Buffer3.End_Counter = RX_BUFFER_LEN - DMA_GetCurrDataCounter(USART3_RX_CH);
+    if(UART_Buffer3.End_Counter == RX_BUFFER_LEN)
+        UART_Buffer3.End_Counter = 0;
 }

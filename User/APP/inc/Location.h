@@ -3,11 +3,13 @@
 
 #include "IMU.h"
 #include "Coder.h"
+//#include "Ranging.h"
+//#include "GPS.h"
 
 #define M_LONG 0.00001174
 #define M_LATI 0.00000899
 
-#include "GPS.h"
+
 
 /**
  * @struct

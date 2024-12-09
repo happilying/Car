@@ -9,7 +9,7 @@
 #define OBSTACLE_DISTANCE 20
 #define DOOR_WIDTH 50
 #define CAR_SPEED 10
-#define BASE_PWM 50
+#define BASE_PWM 40
 #define DOOR_ALIGN_THRESHOLD 5
 #define CIRCLE_RADIUS 100 // 环形道路的近似半径（以厘米为单位）
 
