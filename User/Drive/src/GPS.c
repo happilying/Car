@@ -25,11 +25,9 @@ void GPS_Location_Update(void)
     char nmeaSentence[NMEA_SENTENCE_MAX_LENGTH] = {0};
     uint16_t i = 0;
 
-    while (1)
+    while (UART_Get_Length(GPS_UART) > 0)
     {
-        if (UART_Get_Length(GPS_UART) > 0)
-        {
-            char c = UART_Get_Data(GPS_UART);
+        char c = UART_Get_Data(GPS_UART);
 
             if (c == '\n' && i > 0 && nmeaSentence[i - 1] == '\r')
             {
@@ -41,7 +39,6 @@ void GPS_Location_Update(void)
             {
                 nmeaSentence[i++] = c;
             }
-        }
     }
 
     // 解析GPRMC语句以获取位置数据

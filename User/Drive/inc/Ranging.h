@@ -1,7 +1,7 @@
 #ifndef _RANGING_H
 #define _RANGING_H
 
-#include "Location.h"
+#include "USART.h"
 
 #define Ranging_UART UART3
 #define Ranging_Baudrate 115200
@@ -34,6 +34,7 @@ typedef struct
 } Distances;
 
 void Ranging_Init(void);
+void Ranging_Update(void);
 Distances Ranging_Get_Distance(void);
 
 #endif
